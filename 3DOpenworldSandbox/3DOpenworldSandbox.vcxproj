@@ -136,6 +136,9 @@
     <ClCompile Include="src\Addons\glm\detail\glm.cpp" />
     <ClCompile Include="src\Addons\stb_image\stb_image.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
+    <ClCompile Include="src\RendererClasses\Renderer.cpp" />
+    <ClCompile Include="src\RendererClasses\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h" />
@@ -422,6 +425,9 @@
     <ClInclude Include="src\Addons\glm\vec4.hpp" />
     <ClInclude Include="src\Addons\glm\vector_relational.hpp" />
     <ClInclude Include="src\Addons\stb_image\stb_image.h" />
+    <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
+    <ClInclude Include="src\RendererClasses\Renderer.h" />
+    <ClInclude Include="src\RendererClasses\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
