@@ -36,6 +36,9 @@
     <ClCompile Include="src\RendererClasses\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\RendererClasses\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h">
@@ -903,6 +906,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\RendererClasses\VertexBufferLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RendererClasses\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
