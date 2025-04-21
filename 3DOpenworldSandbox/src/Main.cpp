@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include "Addons/stb_image/stb_image.h"
-#include "glm/gtc/matrix_transform.hpp"
 
 #include <string>
 #include <fstream>
@@ -15,6 +14,10 @@
 #include "RendererClasses/VertexBuffer.h"
 #include "RendererClasses/VertexArray.h"
 #include "RendererClasses/Shader.h"
+#include "RendererClasses/Texture.h"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 
 
@@ -68,10 +71,10 @@ int main(void)
     };*/
     {
         float positions[] = {
-        -0.5f, -0.5f, //0
-         0.5f, -0.5f, //1
-         0.5f,  0.5f, //2
-        -0.5f,  0.5f, //3
+        -0.5f, -0.5f, 0.0f, 0.0f, //0
+         0.5f, -0.5f, 1.0f, 0.0f,//1
+         0.5f,  0.5f, 1.0f, 1.0f,//2
+        -0.5f,  0.5f, 0.0f, 1.0f//3
         };
 
         unsigned int indices[] = {
@@ -79,20 +82,31 @@ int main(void)
             2, 3, 0
         };
 
+        GLCall(glEnable(GL_BLEND)); //Enables blending
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); //tells what the blended pixels should look like
+
 
         VertexArray va;
-        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
-
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+        
         VertexBufferLayout layout;
+        layout.Push<float>(2);
         layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
         IndexBuffer ib(indices, 6);
 
+        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
 
         shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+        shader.SetUniformMat4f("u_MVP", proj);
+
+        Texture texture("res/textures/ANGRY.PNG");
+        texture.Bind();
+        shader.SetUniform1i("u_Texture", 0);
 
         va.Unbind();
         shader.Unbind();
