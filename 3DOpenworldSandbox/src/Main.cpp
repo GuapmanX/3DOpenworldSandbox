@@ -19,12 +19,13 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-
+#include "imgui/imgui.h"
+#include "imgui\imgui_impl_opengl3.h"
+#include "imgui\imgui_impl_glfw.h"
 
 int main(void)
 {
 
-  
 
     /* Initialize the library */
     if (!glfwInit())
@@ -36,8 +37,8 @@ int main(void)
 
     GLFWwindow* window;
 
-    int HeightX = 640;
-    int HeightY = 480;
+    int HeightX = 960;//640;
+    int HeightY = 540;//480;
     const char* WindowName = "Window";
     GLFWmonitor* monitor = glfwGetPrimaryMonitor(); //Goes into the 4th slot of glfwCreateWindow
 
@@ -60,21 +61,18 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    /*float positions[] = {
-        -0.5f, -0.5f,
-         0.5f, -0.5f,
-         0.5f,  0.5f,
 
-         0.5f,  0.5f,
-        -0.5f,  0.5f,
-        -0.5f, -0.5f,
-    };*/
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+
+
     {
         float positions[] = {
-        -0.5f, -0.5f, 0.0f, 0.0f, //0
-         0.5f, -0.5f, 1.0f, 0.0f,//1
-         0.5f,  0.5f, 1.0f, 1.0f,//2
-        -0.5f,  0.5f, 0.0f, 1.0f//3
+            -50.0f, -50.0f, 0.0f, 0.0f, //0
+             50.0f, -50.0f, 1.0f, 0.0f, //1
+             50.0f,  50.0f, 1.0f, 1.0f, //2
+            -50.0f,  50.0f, 0.0f, 1.0f  //3
         };
 
         unsigned int indices[] = {
@@ -96,13 +94,23 @@ int main(void)
 
         IndexBuffer ib(indices, 6);
 
-        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+        //glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+        //glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+        //glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+
+        //glm::mat4 proj2 = glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 0.9f);
+
+
+
+
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
 
         shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-        shader.SetUniformMat4f("u_MVP", proj);
+        //shader.SetUniformMat4f("u_MVP", mvp);
 
         Texture texture("res/textures/ANGRY.PNG");
         texture.Bind();
@@ -115,6 +123,8 @@ int main(void)
 
         Renderer renderer;
 
+        glm::vec3 TranslationA(200, 200, 0);
+        glm::vec3 TranslationB(400, 200, 0);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
@@ -122,15 +132,51 @@ int main(void)
             /* Render here */
             renderer.Clear();
 
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
 
-            shader.Bind();
-            shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
+
+
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), TranslationA);
+                glm::mat4 mvp = proj * view * model;
+                //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, ib, shader);
+            }
+
+
+
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), TranslationB);
+                glm::mat4 mvp = proj * view * model;
+                //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, ib, shader);
+            }
+
+
+
+
+            //shader.Bind();
+            //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
+           // shader.SetUniformMat4f("u_MVP", mvp);
 
             va.Bind();
             ib.Bind();
 
             renderer.Draw(va, ib, shader);
 
+            ImGui::Begin("Hello, world!");
+            ImGui::SliderFloat2("TranslationA", &TranslationA.x, 0.0f, 960.0f);
+            ImGui::SliderFloat2("TranslationB", &TranslationB.x, 0.0f, 960.0f);
+            ImGui::End();
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
@@ -139,7 +185,9 @@ int main(void)
             glfwPollEvents();
         }
     }
-
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
     return 0;
 }

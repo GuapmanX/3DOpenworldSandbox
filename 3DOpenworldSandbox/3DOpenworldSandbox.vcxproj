@@ -134,6 +134,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Addons\glm\detail\glm.cpp" />
+    <ClCompile Include="src\Addons\imgui\imgui.cpp" />
+    <ClCompile Include="src\Addons\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\Addons\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\Addons\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="src\Addons\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\Addons\imgui\imgui_tables.cpp" />
+    <ClCompile Include="src\Addons\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Addons\stb_image\stb_image.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
@@ -145,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h" />
+    <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3native.h" />
     <ClInclude Include="src\Addons\glm\common.hpp" />
     <ClInclude Include="src\Addons\glm\detail\compute_common.hpp" />
     <ClInclude Include="src\Addons\glm\detail\compute_vector_relational.hpp" />
@@ -427,6 +435,15 @@
     <ClInclude Include="src\Addons\glm\vec3.hpp" />
     <ClInclude Include="src\Addons\glm\vec4.hpp" />
     <ClInclude Include="src\Addons\glm\vector_relational.hpp" />
+    <ClInclude Include="src\Addons\imgui\imconfig.h" />
+    <ClInclude Include="src\Addons\imgui\imgui.h" />
+    <ClInclude Include="src\Addons\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="src\Addons\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\Addons\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\Addons\imgui\imgui_internal.h" />
+    <ClInclude Include="src\Addons\imgui\imstb_rectpack.h" />
+    <ClInclude Include="src\Addons\imgui\imstb_textedit.h" />
+    <ClInclude Include="src\Addons\imgui\imstb_truetype.h" />
     <ClInclude Include="src\Addons\stb_image\stb_image.h" />
     <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
     <ClInclude Include="src\RendererClasses\Renderer.h" />
