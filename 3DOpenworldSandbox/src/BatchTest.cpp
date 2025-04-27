@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <array>
 
 #include "RendererClasses/Renderer.h"
 #include "RendererClasses/IndexBuffer.h"
@@ -23,6 +24,16 @@
 #include "imgui\imgui_impl_opengl3.h"
 #include "imgui\imgui_impl_glfw.h"
 
+struct Vertex
+{
+    float Position[2];
+    float Color[4];
+    float TexCoords[2];
+    float TexID;
+};
+//std::array<Vertex, 4>
+
+
 int main(void)
 {
 
@@ -31,14 +42,14 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* window;
 
-    int HeightX = 960;//640;
-    int HeightY = 540;//480;
+    int HeightX = 1920;//640;
+    int HeightY = 1080;//480;
     const char* WindowName = "Window";
     GLFWmonitor* monitor = glfwGetPrimaryMonitor(); //Goes into the 4th slot of glfwCreateWindow
 
@@ -68,16 +79,24 @@ int main(void)
 
 
     {
-        float positions[] = {
-            -50.0f, -50.0f, 0.0f, 0.0f, //0
-             50.0f, -50.0f, 1.0f, 0.0f, //1
-             50.0f,  50.0f, 1.0f, 1.0f, //2
-            -50.0f,  50.0f, 0.0f, 1.0f  //3
-        };
+        /*float positions[] = {
+            -50.0f, -50.0f, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f,//0
+             50.0f, -50.0f, 1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, //1
+             50.0f,  50.0f, 1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, //2
+            -50.0f,  50.0f, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f,  //3
+
+             100.0f, 100.0f, 0.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, //0
+             200.0f, 100.0f, 1.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, //1
+             200.0f, 200.0f, 1.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, //2
+             100.0f, 200.0f, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  //3
+        };*/
 
         unsigned int indices[] = {
             0, 1, 2,
-            2, 3, 0
+            2, 3, 0,
+
+            4, 5, 6,
+            6, 7, 4
         };
 
 
@@ -86,20 +105,22 @@ int main(void)
 
 
         VertexArray va;
-        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
-        
+        VertexBuffer vb(nullptr, 8 * 9 * sizeof(float), GL_DYNAMIC_DRAW);
+
         VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
+        layout.Push<float>(2); //position
+        layout.Push<float>(2); //texture coordinates
+        layout.Push<float>(4); //color
+        layout.Push<float>(1); // texture differentiator
         va.AddBuffer(vb, layout);
 
-        IndexBuffer ib(indices, 6);
+        IndexBuffer ib(indices, 12);
 
         //glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
         //glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
         //glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+        glm::mat4 proj = glm::ortho(0.0f, 1920.0f, 0.0f, 1080.0f, -1.0f, 1.0f);
 
         //glm::mat4 proj2 = glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 0.9f);
 
@@ -107,15 +128,21 @@ int main(void)
 
 
 
-        Shader shader("res/shaders/Basic.shader");
+        Shader shader("res/shaders/BatchRendering.shader");
         shader.Bind();
 
         shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
         //shader.SetUniformMat4f("u_MVP", mvp);
 
         Texture texture("res/textures/ANGRY.PNG");
-        texture.Bind();
-        shader.SetUniform1i("u_Texture", 0);
+        Texture texture2("res/textures/code.PNG");
+
+        texture.Bind(0);
+        texture2.Bind(1);
+
+        int samplers[2] = { 0, 1 };
+        shader.SetUniform1iv("u_Textures", 2, samplers);
+        //shader.SetUniform1i("u_Texture", 0);
 
         va.Unbind();
         shader.Unbind();
@@ -124,13 +151,34 @@ int main(void)
 
         Renderer renderer;
 
-        glm::vec3 TranslationA(200, 200, 0);
-        glm::vec3 TranslationB(400, 200, 0);
+        glm::vec3 TranslationA(0, 0, 0);
+        glm::vec2 ANGRYPOS(0, 0);
+        glm::vec2 CODEPOS(0, 0);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
             /* Render here */
+
+            //Set dynamic vertex buffer
+            float positions[] = {
+            -50.0f + ANGRYPOS.x, -50.0f + ANGRYPOS.y, 0.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f,//0
+             50.0f + ANGRYPOS.x, -50.0f + ANGRYPOS.y, 1.0f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, //1
+             50.0f + ANGRYPOS.x,  50.0f + ANGRYPOS.y, 1.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f, //2
+            -50.0f + ANGRYPOS.x,  50.0f + ANGRYPOS.y, 0.0f, 1.0f, 0.18f, 0.6f, 0.96f, 1.0f, 0.0f,  //3
+
+             100.0f + CODEPOS.x, 100.0f + CODEPOS.y, 0.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, //0
+             200.0f + CODEPOS.x, 100.0f + CODEPOS.y, 1.0f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, //1
+             200.0f + CODEPOS.x, 200.0f + CODEPOS.y, 1.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f, //2
+             100.0f + CODEPOS.x, 200.0f + CODEPOS.y, 0.0f, 1.0f, 1.0f, 0.93f, 0.24f, 1.0f, 1.0f  //3
+            };
+
+
+            vb.Bind();
+            //GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * 9 * sizeof(float),positions));
+            vb.SetBufferData(positions);
+            vb.Unbind();
+
             renderer.Clear();
 
             ImGui_ImplOpenGL3_NewFrame();
@@ -150,14 +198,14 @@ int main(void)
 
 
 
-            {
+            /* {
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), TranslationB);
                 glm::mat4 mvp = proj * view * model;
                 //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
                 shader.Bind();
                 shader.SetUniformMat4f("u_MVP", mvp);
                 renderer.Draw(va, ib, shader);
-            }
+            }*/
 
 
 
@@ -167,14 +215,12 @@ int main(void)
             //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
            // shader.SetUniformMat4f("u_MVP", mvp);
 
-            va.Bind();
-            ib.Bind();
 
-           // renderer.Draw(va, ib, shader);
 
             ImGui::Begin("Hello, world!");
             ImGui::SliderFloat2("TranslationA", &TranslationA.x, 0.0f, 960.0f);
-            ImGui::SliderFloat2("TranslationB", &TranslationB.x, 0.0f, 960.0f);
+            ImGui::SliderFloat2("Part1", &ANGRYPOS.x, 0.0f, 960.0f);
+            ImGui::SliderFloat2("Part2", &CODEPOS.x, 0.0f, 960.0f);
             ImGui::End();
 
             ImGui::Render();

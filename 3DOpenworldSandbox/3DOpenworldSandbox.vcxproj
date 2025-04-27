@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BatchTest.cpp" />
     <ClCompile Include="src\Addons\glm\detail\glm.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui_demo.cpp" />
@@ -142,7 +143,6 @@
     <ClCompile Include="src\Addons\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Addons\stb_image\stb_image.cpp" />
-    <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
     <ClCompile Include="src\RendererClasses\Renderer.cpp" />
     <ClCompile Include="src\RendererClasses\Shader.cpp" />
@@ -458,6 +458,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
+    <None Include="res\shaders\BatchRendering.shader" />
     <None Include="src\Addons\glm\detail\func_common.inl" />
     <None Include="src\Addons\glm\detail\func_common_simd.inl" />
     <None Include="src\Addons\glm\detail\func_exponential.inl" />
