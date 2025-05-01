@@ -60,7 +60,7 @@
     <ClCompile Include="src\Addons\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BatchTest.cpp">
+    <ClCompile Include="src\3DObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1383,5 +1383,6 @@
     </None>
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\BatchRendering.shader" />
+    <None Include="res\shaders\3DObject.shader" />
   </ItemGroup>
 </Project>

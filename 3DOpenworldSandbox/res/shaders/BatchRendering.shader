@@ -29,7 +29,7 @@ in vec2 v_TexCoord;
 in vec4 v_CustomColor;
 flat in float v_TexIndex;
 
-uniform vec4 u_Color;
+//uniform vec4 u_Color;
 uniform sampler2D u_Textures[2];
 
 void main()
