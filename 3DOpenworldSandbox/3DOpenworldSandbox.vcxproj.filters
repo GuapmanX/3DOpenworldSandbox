@@ -63,6 +63,9 @@
     <ClCompile Include="src\3DObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\RendererClasses\CubeMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h">
@@ -968,6 +971,12 @@
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\RendererClasses\CubeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameClasses\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
@@ -1384,5 +1393,6 @@
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\BatchRendering.shader" />
     <None Include="res\shaders\3DObject.shader" />
+    <None Include="res\shaders\3DObjectCM.shader" />
   </ItemGroup>
 </Project>

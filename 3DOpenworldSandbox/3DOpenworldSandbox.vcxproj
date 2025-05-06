@@ -143,6 +143,7 @@
     <ClCompile Include="src\Addons\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Addons\stb_image\stb_image.cpp" />
+    <ClCompile Include="src\RendererClasses\CubeMap.cpp" />
     <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
     <ClCompile Include="src\RendererClasses\Renderer.cpp" />
     <ClCompile Include="src\RendererClasses\Shader.cpp" />
@@ -445,6 +446,8 @@
     <ClInclude Include="src\Addons\imgui\imstb_textedit.h" />
     <ClInclude Include="src\Addons\imgui\imstb_truetype.h" />
     <ClInclude Include="src\Addons\stb_image\stb_image.h" />
+    <ClInclude Include="src\GameClasses\Camera.h" />
+    <ClInclude Include="src\RendererClasses\CubeMap.h" />
     <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
     <ClInclude Include="src\RendererClasses\Renderer.h" />
     <ClInclude Include="src\RendererClasses\Shader.h" />
@@ -457,6 +460,7 @@
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\shaders\3DObjectCM.shader" />
     <None Include="res\shaders\3DObject.shader" />
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\BatchRendering.shader" />

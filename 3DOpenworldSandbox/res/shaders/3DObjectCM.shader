@@ -6,7 +6,7 @@ layout(location = 1) in vec4 a_Color;
 layout(location = 2) in vec2 a_Texcoord;
 
 out vec4 v_Color;
-out vec2 v_Texcoord;
+out vec3 v_3DTexcoord;
 
 uniform mat4 u_MVP;
         
@@ -14,7 +14,7 @@ void main()
 {
     gl_Position = u_MVP * vec4(a_Position,1.0);
     v_Color = a_Color;
-    v_Texcoord = a_Texcoord;
+    v_3DTexcoord = a_Position;
 };
 
 #shader fragment
@@ -23,12 +23,12 @@ void main()
 layout(location = 0) out vec4 color;
 
 in vec4 v_Color;
-in vec2 v_Texcoord;
+in vec3 v_3DTexcoord;
 
-uniform sampler2D u_Texture;
+uniform samplerCube u_Texture;
 
 void main()
 {
-    vec4 texColor = texture(u_Texture,v_Texcoord);
-    color = v_Color * texColor;
+    vec4 texColor = texture(u_Texture,normalize(v_3DTexcoord));
+    color = texColor;
 };
