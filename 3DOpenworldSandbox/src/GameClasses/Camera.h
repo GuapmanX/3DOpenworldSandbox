@@ -22,10 +22,17 @@ struct AngleConstraint
 	}
 };
 
+struct CameraSettings
+{
+	float Sensitivity = 1.0f;
+	float Speed = 1.0f;
+};
+
 struct Camera
 {
 	CameraRotation m_Rotation{ 0.0f,0.0f };
 	AngleConstraint m_YConstraint{ 70.0f,-70.0f };
+	CameraSettings m_Settings{ 0.125f,5.0f };
 
 
 	glm::mat4 m_viewMartix = glm::mat4(1.0f);
@@ -47,8 +54,8 @@ struct Camera
 
 	void AddRotation(float DeltaX, float DeltaY)
 	{
-		m_Rotation.X += DeltaX;
-		m_Rotation.Y = m_YConstraint.Clamp(m_Rotation.Y + DeltaY);
+		m_Rotation.X += DeltaX * m_Settings.Sensitivity;
+		m_Rotation.Y = m_YConstraint.Clamp(m_Rotation.Y + (DeltaY * m_Settings.Sensitivity));
 	}
 
 	void SetPosition(glm::vec3 NewPosition)
@@ -60,5 +67,6 @@ struct Camera
 	inline glm::mat4 GetViewMatrix() const { return  m_viewMartix; }
 	inline glm::vec3 GetPosition() const { return m_Position; }
 	inline glm::vec3 GetDirection() const { return m_Front; }
+	inline float GetCameraSpeed() const { return m_Settings.Speed; }
 
 };

@@ -26,6 +26,8 @@
 
 #include "GameClasses/Camera.h"
 
+
+
 struct Vector3
 {
     float x, y, z;
@@ -134,31 +136,41 @@ static Cube CreateCube(float x, float y, float z, float size )
     return C;
 };
 
-void processInput(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-        std::cout << "respect" << std::endl;
-}
 
 struct Time
 {
     float LastTime = glfwGetTime();
+    float DeltaTime = 0.0f;
 
+    void UpdateDeltaTime()
+    {
+        float Current = glfwGetTime();
+        DeltaTime = Current - LastTime;
+        LastTime = Current;
+    };
 
     float GetDeltaTime()
     {
-        float Current = glfwGetTime();
-        float Delta = Current - LastTime;
-        LastTime = Current;
-        return Delta;
-    }
+        return DeltaTime;
+    };
 };
-
 
 //GLOBAL VARIABLES
 Camera MainCamera;
 Time DT;
 //
+
+void processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        MainCamera.SetPosition(MainCamera.GetPosition() + (MainCamera.GetDirection() * DT.GetDeltaTime() * MainCamera.GetCameraSpeed()));
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        MainCamera.SetPosition(MainCamera.GetPosition() - (MainCamera.GetDirection() * DT.GetDeltaTime() * MainCamera.GetCameraSpeed()));
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        MainCamera.SetPosition(MainCamera.GetPosition() - (glm::cross(MainCamera.GetDirection(),upVector) * DT.GetDeltaTime() * MainCamera.GetCameraSpeed()));
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        MainCamera.SetPosition(MainCamera.GetPosition() + (glm::cross(MainCamera.GetDirection(), upVector) * DT.GetDeltaTime() * MainCamera.GetCameraSpeed()));
+};
 
 int main(void)
 {
@@ -347,7 +359,9 @@ int main(void)
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
+            DT.UpdateDeltaTime();
 
+            //std::cout << DT.GetDeltaTime() << std::endl;
 
             ///////CAMERA SYSTEM//////////////
             double mouseX, mouseY;
@@ -387,30 +401,12 @@ int main(void)
 
                 //glm::mat4 view = glm::mat4(1.0f);
 
-               /* CameraRotation Rotation = MainCamera.GetRotation();
 
 
-                glm::vec3 direction;
-
-                direction.x = cos(glm::radians(Rotation.X)) * cos(glm::radians(-Rotation.Y));
-                direction.y = sin(glm::radians(-Rotation.Y));
-                direction.z = sin(glm::radians(Rotation.X)) * cos(glm::radians(-Rotation.Y));
-
-                direction = glm::normalize(direction);*/
-
-                MainCamera.SetPosition(MainCamera.GetPosition() + (MainCamera.GetDirection() * DT.GetDeltaTime()));
+                //MainCamera.SetPosition(MainCamera.GetPosition() + (MainCamera.GetDirection() * DT.GetDeltaTime()));
 
                 MainCamera.Update();
 
-                //CameraPosition += direction * DT.GetDeltaTime();
-
-                //iew = glm::rotate(view, glm::radians(Rotation.Y), glm::vec3(1.0f, 0.0f, 0.0f));
-                //view = glm::rotate(view, glm::radians(Rotation.X), glm::vec3(0.0f, 1.0f, 0.0f));
-
-                //view = glm::translate(view, CameraPosition);
-                //glm::vec3 cameraTarget = CameraPosition + direction;
-               // glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-                //glm::mat4 view = glm::lookAt(CameraPosition, cameraTarget, up);
 
                 glm::mat4 view = MainCamera.GetViewMatrix();
 
