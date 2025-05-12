@@ -60,10 +60,25 @@
     <ClCompile Include="src\Addons\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\3DObject.cpp">
+    <ClCompile Include="src\RendererClasses\CubeMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\RendererClasses\CubeMap.cpp">
+    <ClCompile Include="src\GameCore\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameCore\Time.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameClasses\BufferObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameClasses\RenderObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameClasses\ShaderObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\3DObjectOOP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -974,7 +989,19 @@
     <ClInclude Include="src\RendererClasses\CubeMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameClasses\Camera.h">
+    <ClInclude Include="src\GameCore\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameCore\Time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameClasses\BufferObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameClasses\RenderObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameClasses\ShaderObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1394,5 +1421,6 @@
     <None Include="res\shaders\BatchRendering.shader" />
     <None Include="res\shaders\3DObject.shader" />
     <None Include="res\shaders\3DObjectCM.shader" />
+    <None Include="res\shaders\3DObjectLighting.shader" />
   </ItemGroup>
 </Project>

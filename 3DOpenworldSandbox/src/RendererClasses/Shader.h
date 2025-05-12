@@ -15,12 +15,17 @@ private:
 	std::string m_FilePath;
 	unsigned int m_RendererID;
 	std::unordered_map<std::string, int> m_UniformLocationCache;
+	bool Initialized = false;
+	bool Moved = false;
 public:
 	Shader(const std::string& filepath);
+	Shader();
 	~Shader();
 
 	void Bind() const;
 	void Unbind() const;
+
+	Shader& operator=(Shader&& other) noexcept;
 
 	// set uniforms
 	void SetUniform1i(const std::string& name, int value);

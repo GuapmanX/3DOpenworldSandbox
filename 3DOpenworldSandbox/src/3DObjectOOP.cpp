@@ -8,14 +8,18 @@
 #include <fstream>
 #include <sstream>
 
-#include "RendererClasses/Renderer.h"
-#include "RendererClasses/IndexBuffer.h"
-#include "RendererClasses/VertexBufferLayout.h"
-#include "RendererClasses/VertexBuffer.h"
-#include "RendererClasses/VertexArray.h"
-#include "RendererClasses/Shader.h"
-#include "RendererClasses/Texture.h"
-#include "RendererClasses/CubeMap.h"
+//#include "RendererClasses/Renderer.h"
+//#include "RendererClasses/IndexBuffer.h"
+//#include "RendererClasses/VertexBufferLayout.h"
+//#include "RendererClasses/VertexBuffer.h"
+//#include "RendererClasses/VertexArray.h"
+//#include "RendererClasses/Shader.h"
+//#include "RendererClasses/Texture.h"
+//#include "RendererClasses/CubeMap.h"
+
+#include "GameClasses/BufferObject.h"
+#include "GameClasses/ShaderObject.h"
+#include "GameClasses/RenderObject.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -26,7 +30,7 @@
 
 #include "GameCore/Camera.h"
 #include "GameCore/Time.h"
-
+#include <functional>
 
 
 struct Vector3
@@ -48,7 +52,7 @@ struct TextureCoordinates2D
 
 struct Vertex
 {
-    Vector3 Position{ 0.0f ,0.0f, 0.0f};
+    Vector3 Position{ 0.0f ,0.0f, 0.0f };
     RGB Color = { 1.0f, 0.0f, 0.0f };
     TextureCoordinates2D TC{ 0.0f, 0.0f };
 };
@@ -63,7 +67,7 @@ struct Cube
     Quad q0, q1, q2, q3, q4, q5;
 };
 
-static Cube CreateCube(float x, float y, float z, float size )
+static Cube CreateCube(float x, float y, float z, float size)
 {
     Cube C;
 
@@ -146,7 +150,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         Camera::SetPosition(Camera::GetPosition() - (Camera::GetDirection() * Time::GetDeltaTime() * Camera::GetCameraSpeed()));
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        Camera::SetPosition(Camera::GetPosition() - (glm::cross(Camera::GetDirection(),upVector) * Time::GetDeltaTime() * Camera::GetCameraSpeed()));
+        Camera::SetPosition(Camera::GetPosition() - (glm::cross(Camera::GetDirection(), upVector) * Time::GetDeltaTime() * Camera::GetCameraSpeed()));
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         Camera::SetPosition(Camera::GetPosition() + (glm::cross(Camera::GetDirection(), upVector) * Time::GetDeltaTime() * Camera::GetCameraSpeed()));
 };
@@ -272,67 +276,35 @@ int main(void)
         GLCall(glEnable(GL_DEPTH_TEST));
         GLCall(glDepthFunc(GL_LESS));
 
-        VertexArray va;
+        std::vector<unsigned int> Layout = { 3, 3, 2 };
 
-        //VertexBuffer vb(&positions, sizeof(Cube));
+        BufferObject MinecraftBlockVB(&positions, sizeof(Cube), indices, 36, Layout);
 
-        VertexBuffer vb;
-        vb = VertexBuffer(&positions, sizeof(Cube));
+        //Shader Shader("res/shaders/3DObjectCM.shader");
+
+        std::function<void(Shader& SHADER)> Nothing = {};
+        std::function<void(Shader& SHADER)> Nothing2 = {};
+
+        ShaderObject ShaderOBJ("res/shaders/3DObjectCM.shader",Nothing,Nothing2);
 
 
-        VertexBufferLayout layout;
-        layout.Push<float>(3);//position
-        layout.Push<float>(3);//color
-        layout.Push<float>(2);//texcoords
-        va.AddBuffer(vb, layout);
-        
-        //IndexBuffer ib(indices, 36);
-
-        IndexBuffer ib;
-        ib = IndexBuffer(indices, 36);
+        RenderObject MCBLOCK(&MinecraftBlockVB, &ShaderOBJ);
 
 
 
 
 
+     
 
-        Shader shader;
-        shader = Shader("res/shaders/3DObjectLighting.shader");
-
-
-        shader.Bind();
-
-        //shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-        //shader.SetUniformMat4f("u_MVP", mvp);
+       
 
 
 
-        //Texture texture("res/textures/ANGRY.PNG");
-        //texture.Bind(0);
-        //shader.SetUniform1i("u_Texture", 0);
         
 
 
-        std::array<std::string, 6> textures = {
-            "res/textures/GrassBlockSide.png", //RIGHT
-            "res/textures/GrassBlockSide.png", //LEFT
-            "res/textures/GrassBlockTop.png",//TOP
-            "res/textures/GrassBlockBottom.png", //BOTTOM
-            "res/textures/GrassBlockSide.png", //FRONT
-            "res/textures/GrassBlockSide.png", //REAR
-        };
 
-        CubeMap CM(textures);
-        CM.Bind(0);
-        shader.SetUniform1i("u_Texture", 0);
-
-
-
-        va.Unbind();
-        shader.Unbind();
-        vb.Unbind();
-        ib.Unbind();
-
+        
         Renderer renderer;
 
 
@@ -397,20 +369,8 @@ int main(void)
                 Camera::Update();
 
 
-                glm::mat4 view = Camera::GetViewMatrix();
-
-                glm::mat4 projection;
-                projection = Camera::GetProjection(); //glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 100.0f);
-
-                glm::mat4 mvp = projection * view * model;
-
-
-                //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
-                shader.Bind();
-                shader.SetUniformMat4f("u_MVP", mvp);
-                renderer.Draw(va, ib, shader);
             }
-
+            MCBLOCK.Draw(Time::GetDeltaTime());
 
 
 
@@ -418,6 +378,7 @@ int main(void)
             //shader.Bind();
             //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
            // shader.SetUniformMat4f("u_MVP", mvp);
+
 
 
             // renderer.Draw(va, ib, shader);

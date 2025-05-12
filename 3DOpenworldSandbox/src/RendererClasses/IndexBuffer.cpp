@@ -2,6 +2,11 @@
 
 #include "Renderer.h"
 
+IndexBuffer::IndexBuffer()
+    :m_RendererID(0)
+{
+}
+
 IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
     :m_Count(count)
 {
@@ -14,15 +19,29 @@ IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
 
 IndexBuffer::~IndexBuffer()
 {
-    GLCall(glDeleteBuffers(1, &m_RendererID));
+        if (Initialized && !Moved)
+        {
+            GLCall(glDeleteBuffers(1, &m_RendererID));
+        }
+}
+
+IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept
+{
+    this->m_RendererID = other.m_RendererID;
+    this->m_Count = other.m_Count;
+    this->Initialized = true;
+    other.Moved = true;
+    other.~IndexBuffer();
+
+    return *this;
 }
 
 void IndexBuffer::Bind() const
 {
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
 }
 
 void IndexBuffer::Unbind() const
 {
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }

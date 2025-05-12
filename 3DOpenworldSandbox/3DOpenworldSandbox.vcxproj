@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src/Addons;$(SolutionDir)3DOpenworldSandbox\Dependencies\GLFW\include;$(SolutionDir)3DOpenworldSandbox\Dependencies\GLEW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/Addons;$(SolutionDir)3DOpenworldSandbox\Dependencies\GLFW\include;$(SolutionDir)3DOpenworldSandbox\Dependencies\GLEW\include;$(SolutionDir)3DOpenworldSandbox\src\RendererClasses;$(SolutionDir)3DOpenworldSandbox\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -93,7 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src/Addons;$(SolutionDir)3DOpenworldSandbox\Dependencies\GLFW\include;$(SolutionDir)3DOpenworldSandbox\Dependencies\GLEW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/Addons;$(SolutionDir)3DOpenworldSandbox\Dependencies\GLFW\include;$(SolutionDir)3DOpenworldSandbox\Dependencies\GLEW\include;$(SolutionDir)3DOpenworldSandbox\src\RendererClasses;$(SolutionDir)3DOpenworldSandbox\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,7 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\3DObject.cpp" />
+    <ClCompile Include="src\3DObjectOOP.cpp" />
     <ClCompile Include="src\Addons\glm\detail\glm.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui_demo.cpp" />
@@ -143,6 +143,11 @@
     <ClCompile Include="src\Addons\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Addons\stb_image\stb_image.cpp" />
+    <ClCompile Include="src\GameClasses\BufferObject.cpp" />
+    <ClCompile Include="src\GameClasses\RenderObject.cpp" />
+    <ClCompile Include="src\GameClasses\ShaderObject.cpp" />
+    <ClCompile Include="src\GameCore\Camera.cpp" />
+    <ClCompile Include="src\GameCore\Time.cpp" />
     <ClCompile Include="src\RendererClasses\CubeMap.cpp" />
     <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
     <ClCompile Include="src\RendererClasses\Renderer.cpp" />
@@ -446,7 +451,11 @@
     <ClInclude Include="src\Addons\imgui\imstb_textedit.h" />
     <ClInclude Include="src\Addons\imgui\imstb_truetype.h" />
     <ClInclude Include="src\Addons\stb_image\stb_image.h" />
-    <ClInclude Include="src\GameClasses\Camera.h" />
+    <ClInclude Include="src\GameClasses\BufferObject.h" />
+    <ClInclude Include="src\GameClasses\RenderObject.h" />
+    <ClInclude Include="src\GameClasses\ShaderObject.h" />
+    <ClInclude Include="src\GameCore\Camera.h" />
+    <ClInclude Include="src\GameCore\Time.h" />
     <ClInclude Include="src\RendererClasses\CubeMap.h" />
     <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
     <ClInclude Include="src\RendererClasses\Renderer.h" />
@@ -462,6 +471,7 @@
   <ItemGroup>
     <None Include="res\shaders\3DObjectCM.shader" />
     <None Include="res\shaders\3DObject.shader" />
+    <None Include="res\shaders\3DObjectLighting.shader" />
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\BatchRendering.shader" />
     <None Include="src\Addons\glm\detail\func_common.inl" />

@@ -13,11 +13,20 @@ Shader::Shader(const std::string& filepath)
 {
     ShaderProgramSource source = ParseShader(filepath);
     m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
+    Initialized = true;
+}
+
+Shader::Shader()
+{
 }
 
 Shader::~Shader()
 {
-    GLCall(glDeleteProgram(m_RendererID));
+    if (Initialized && !Moved)
+    {
+        //std::cout << m_RendererID << std::endl;
+        GLCall(glDeleteProgram(m_RendererID));
+    }
 }
 
 ShaderProgramSource Shader::ParseShader(const std::string& filePath)
@@ -92,37 +101,70 @@ unsigned int Shader::CompileShader(unsigned int type, const std::string& source)
 
 void Shader::Bind() const
 {
-    GLCall(glUseProgram(m_RendererID));
+    if (Initialized)
+    {
+        GLCall(glUseProgram(m_RendererID));
+    }
 }
 
 void Shader::Unbind() const
 {
-    GLCall(glUseProgram(0));
+    if (Initialized)
+    {
+        GLCall(glUseProgram(0));
+    }
+}
+
+Shader& Shader::operator=(Shader&& other) noexcept
+{
+    this->m_RendererID = other.m_RendererID;
+    this->m_UniformLocationCache = other.m_UniformLocationCache;
+    this->m_FilePath = other.m_FilePath;
+    this->Initialized = true;
+    other.Moved = true; //prevents deletion of the ID because OpenGL hates Object Oriented Programming
+    //other.~Shader(); //shaders for some whatever reason hate this
+
+    return *this;
 }
 
 void Shader::SetUniform1i(const std::string& name, int value)
 {
-    GLCall(glUniform1i(GetUniformLocation(name), value));
+    if (Initialized)
+    {
+        GLCall(glUniform1i(GetUniformLocation(name), value));
+    }
 }
 
 void Shader::SetUniform1f(const std::string& name, float value)
 {
-    GLCall(glUniform1f(GetUniformLocation(name), value));
+    if (Initialized)
+    {
+        GLCall(glUniform1f(GetUniformLocation(name), value));
+    }
 }
 
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
 {
-    GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+    if (Initialized)
+    {
+        GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+    }
 }
 
 void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& matrix)
 {
-    GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+    if (Initialized)
+    {
+        GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+    }
 }
 
 void Shader::SetUniform1iv(const std::string& name, int amount, int arr[])
 {
-    GLCall(glUniform1iv(GetUniformLocation(name), amount, arr));
+    if (Initialized)
+    {
+        GLCall(glUniform1iv(GetUniformLocation(name), amount, arr));
+    }
 }
 
 unsigned int Shader::GetUniformLocation(const std::string& name)
