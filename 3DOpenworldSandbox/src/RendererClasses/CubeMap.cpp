@@ -3,7 +3,7 @@
 #include <iostream>
 
 CubeMap::CubeMap(std::array<std::string, 6> faces)
-	:m_Width(0), m_Height(0), m_BPP(0)
+	:m_Width(0), m_Height(0), m_BPP(0), m_TextureID(0)
 {
 	GLCall(glGenTextures(1, &m_TextureID));
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
@@ -37,9 +37,36 @@ CubeMap::CubeMap(std::array<std::string, 6> faces)
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
+CubeMap::CubeMap()
+	:m_Width(0), m_Height(0), m_BPP(0), m_TextureID(0)
+{
+
+}
+
+
+
 CubeMap::~CubeMap()
 {
-	GLCall(glDeleteTextures(1, &m_TextureID));
+	if (!Moved)
+	{
+		GLCall(glDeleteTextures(1, &m_TextureID));
+	}
+}
+
+CubeMap& CubeMap::operator=(CubeMap&& other) noexcept
+{
+	this->m_TextureID = other.m_TextureID;
+	other.m_TextureID = 0;
+	other.Moved = true;
+
+	return *this;
+}
+
+CubeMap::CubeMap(CubeMap&& other) noexcept
+{
+	this->m_TextureID = other.m_TextureID;
+	other.m_TextureID = 0;
+	other.Moved = true;
 }
 
 void CubeMap::Bind(unsigned int slot) const

@@ -148,6 +148,7 @@
     <ClCompile Include="src\GameClasses\ShaderObject.cpp" />
     <ClCompile Include="src\GameCore\Camera.cpp" />
     <ClCompile Include="src\GameCore\Time.cpp" />
+    <ClCompile Include="src\GameObjects\GrassBlock.cpp" />
     <ClCompile Include="src\RendererClasses\CubeMap.cpp" />
     <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
     <ClCompile Include="src\RendererClasses\Renderer.cpp" />
@@ -456,6 +457,7 @@
     <ClInclude Include="src\GameClasses\ShaderObject.h" />
     <ClInclude Include="src\GameCore\Camera.h" />
     <ClInclude Include="src\GameCore\Time.h" />
+    <ClInclude Include="src\GameObjects\GrassBlock.h" />
     <ClInclude Include="src\RendererClasses\CubeMap.h" />
     <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
     <ClInclude Include="src\RendererClasses\Renderer.h" />
@@ -464,6 +466,7 @@
     <ClInclude Include="src\RendererClasses\VertexArray.h" />
     <ClInclude Include="src\RendererClasses\VertexBuffer.h" />
     <ClInclude Include="src\RendererClasses\VertexBufferLayout.h" />
+    <ClInclude Include="src\Shapes\Cube.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />

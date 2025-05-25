@@ -200,44 +200,14 @@ int main(void)
 
 
     {
+        GLCall(glEnable(GL_BLEND)); //Enables blending
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); //tells what the blended pixels should look like
 
-        /*float positions[] = {
-            // front
-                   -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, // 0
-                   0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,  // 1
-                   0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,   // 2
-                   -0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,  // 3
+        /* These lines make sure that  the closest vertices are always in front of the farthest vertices in the z - axis*/
+        GLCall(glEnable(GL_DEPTH_TEST));
+        GLCall(glDepthFunc(GL_LESS));
 
-                   // top
-                   -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // 4
-                   0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f,  // 5
-                   0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,   // 6
-                   -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,  // 7
 
-                   // left
-                   -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // 8
-                   -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // 9
-                   -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,   // 10
-                   -0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f,  // 11
-
-                   // right
-                   0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, // 12
-                   0.5f, 0.5f, -0.5f, 0.5f, 0.5f, 0.5f,  // 13
-                   0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,   // 14
-                   0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f,  // 15
-
-                   // back
-                   -0.5f, -0.5f, 0.5f, 0.7f, 0.7f, 0.7f, // 16
-                   0.5f, -0.5f, 0.5f, 0.7f, 0.7f, 0.7f,  // 17
-                   0.5f, 0.5f, 0.5f, 0.7f, 0.7f, 0.7f,   // 18
-                   -0.5f, 0.5f, 0.5f, 0.7f, 0.7f, 0.7f,  // 19
-
-                   // bottom
-                   -0.5f, -0.5f, 0.5f, 0.3f, 0.3f, 0.3f, // 20
-                   0.5f, -0.5f, 0.5f, 0.3f, 0.3f, 0.3f,  // 21
-                   0.5f, -0.5f, -0.5f, 0.3f, 0.3f, 0.3f, // 22
-                   -0.5f, -0.5f, -0.5f, 0.3f, 0.3f, 0.3f // 23
-        };*/
 
         Cube positions = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
 
@@ -268,26 +238,42 @@ int main(void)
              22, 23, 20  // second triangle
         };
 
-
-        GLCall(glEnable(GL_BLEND)); //Enables blending
-        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); //tells what the blended pixels should look like
-
-        /* These lines make sure that  the closest vertices are always in front of the farthest vertices in the z - axis*/
-        GLCall(glEnable(GL_DEPTH_TEST));
-        GLCall(glDepthFunc(GL_LESS));
-
         std::vector<unsigned int> Layout = { 3, 3, 2 };
 
         BufferObject MinecraftBlockVB(&positions, sizeof(Cube), indices, 36, Layout);
 
-        //Shader Shader("res/shaders/3DObjectCM.shader");
 
-        std::function<void(Shader& SHADER)> Nothing = {};
-        std::function<void(Shader& SHADER)> Nothing2 = {};
+        std::array<std::string, 6> texturesCB = {
+            "res/textures/GrassBlockSide.png", //RIGHT
+            "res/textures/GrassBlockSide.png", //LEFT
+            "res/textures/GrassBlockTop.png",//TOP
+            "res/textures/GrassBlockBottom.png", //BOTTOM
+            "res/textures/GrassBlockSide.png", //FRONT
+            "res/textures/GrassBlockSide.png", //REAR
+        };
 
-        ShaderObject ShaderOBJ("res/shaders/3DObjectCM.shader",Nothing,Nothing2);
+        CubeMap CM(texturesCB);
 
 
+        std::function<void(Shader& SHADER)> shaderRuntime = [&](Shader& SHADER) {
+            SHADER.Bind();
+
+
+            float Colorval = glm::abs(glm::cos(glfwGetTime()));
+            std::cout << Colorval << std::endl;
+            SHADER.SetUniform4f("u_Color", Colorval,Colorval,Colorval,1);
+
+            SHADER.Unbind();
+        };
+
+        std::function<void(Shader& SHADER)> shaderInitializer = [&](Shader& SHADER) {
+            SHADER.Bind();
+            CM.Bind(0);
+            SHADER.SetUniform1i("u_Texture", 0);
+            SHADER.Unbind();
+         };
+
+        ShaderObject ShaderOBJ("res/shaders/3DObjectCM.shader",shaderRuntime, shaderInitializer);
         RenderObject MCBLOCK(&MinecraftBlockVB, &ShaderOBJ);
 
 
@@ -349,27 +335,7 @@ int main(void)
 
 
 
-            {
-                //shit projection
-                /*glm::mat4 modelMatrix = glm::mat4(1.0f);
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(ObjectRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(ObjectRotation.y), glm::vec3(0.0f, 0.0f, 1.0f));
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(ObjectRotation.z), glm::vec3(0.0f, 1.0f, 0.0f));*/
-
-                glm::mat4 model = glm::mat4(1.0f);
-                model = glm::rotate(model, glm::radians(ObjectRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-                model = glm::rotate(model, glm::radians(ObjectRotation.y), glm::vec3(0.0f, 0.0f, 1.0f));
-                model = glm::rotate(model, glm::radians(ObjectRotation.z), glm::vec3(0.0f, 1.0f, 0.0f));
-
-
-
-
-                //MainCamera.SetPosition(MainCamera.GetPosition() + (MainCamera.GetDirection() * DT.GetDeltaTime()));
-
-                Camera::Update();
-
-
-            }
+            Camera::Update();
             MCBLOCK.Draw(Time::GetDeltaTime());
 
 
@@ -384,7 +350,7 @@ int main(void)
             // renderer.Draw(va, ib, shader);
 
             ImGui::Begin("Hello, world!");
-            ImGui::SliderFloat3("Block Rotation", &ObjectRotation.x, 0.0f, 360.0f);
+            ImGui::Text("framerate = %f",1.0f/Time::GetDeltaTime());
             ImGui::End();
 
             ImGui::Render();

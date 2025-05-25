@@ -26,9 +26,10 @@ in vec4 v_Color;
 in vec3 v_3DTexcoord;
 
 uniform samplerCube u_Texture;
+uniform vec4 u_Color;
 
 void main()
 {
     vec4 texColor = texture(u_Texture,normalize(v_3DTexcoord));
-    color = texColor;
+    color = texColor * u_Color;
 };

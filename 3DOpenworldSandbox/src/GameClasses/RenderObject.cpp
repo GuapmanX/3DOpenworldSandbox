@@ -2,17 +2,11 @@
 #include "GameCore/Camera.h"
 #include <iostream>
 
-
-
 RenderObject::RenderObject(BufferObject* p_Buffer, ShaderObject* p_Shader)
 	:m_Buffer(p_Buffer), m_Shader(p_Shader)
 {
     Shader& shader = m_Shader->GetShader();
-
-    shader.Bind();
-    CM.Bind(0);
-    shader.SetUniform1i("u_Texture", 0);
-	shader.Unbind();
+	p_Shader->InitializeShader();
 
 }
 
@@ -24,7 +18,6 @@ void RenderObject::Draw(float DeltaTime)
 {
 	if ((m_Buffer) && (m_Shader))
 	{
-		//Shader shader = *m_Shader;
 		Shader& shader = m_Shader->GetShader();
 
 		glm::mat4 Model(1.0f);
@@ -34,6 +27,7 @@ void RenderObject::Draw(float DeltaTime)
 		glm::mat4 mvp = Projection * View * Model;
 
 
+		m_Shader->ExcecuteShader();
 
 		Renderer DRAWER;
 
