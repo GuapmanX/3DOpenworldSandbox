@@ -2,11 +2,6 @@
 
 #include "Renderer.h"
 
-IndexBuffer::IndexBuffer()
-    :m_RendererID(0)
-{
-}
-
 IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
     :m_Count(count)
 {
@@ -27,6 +22,18 @@ IndexBuffer::~IndexBuffer()
 
 IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept
 {
+    this->m_RendererID = other.m_RendererID;
+    this->m_Count = other.m_Count;
+    this->Initialized = true;
+    other.Moved = true;
+    other.~IndexBuffer();
+
+    return *this;
+}
+
+IndexBuffer& IndexBuffer::operator=(IndexBuffer& other) noexcept
+{
+    // TODO: insert return statement here
     this->m_RendererID = other.m_RendererID;
     this->m_Count = other.m_Count;
     this->Initialized = true;

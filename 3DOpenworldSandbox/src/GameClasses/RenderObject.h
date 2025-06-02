@@ -10,12 +10,13 @@ class RenderObject
 {
 private:
 	BufferObject* m_Buffer;
-	ShaderObject* m_Shader;
+	Shader* m_Shader;
 public:
 	RenderObject() = default;
-	RenderObject(BufferObject* p_Buffer, ShaderObject* p_Shader);
+	RenderObject(BufferObject* p_Buffer, Shader* p_Shader);
 	~RenderObject();
 	void Draw(float DeltaTime);
 	inline void addBufferObject(BufferObject* p_Buffer) { m_Buffer = p_Buffer; }
-	inline void addShaderObject(ShaderObject* p_Shader) { m_Shader = p_Shader; }
+	inline void addShaderObject(Shader* p_Shader) { m_Shader = p_Shader; }
+	inline Shader& GetShader() { return *m_Shader; }
 };

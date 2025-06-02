@@ -19,7 +19,7 @@ private:
 	bool Moved = false;
 public:
 	Shader(const std::string& filepath);
-	Shader();
+	Shader() = default;
 	~Shader();
 
 	void Bind() const;

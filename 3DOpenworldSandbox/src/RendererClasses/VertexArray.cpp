@@ -3,18 +3,31 @@
 #include "VertexBufferLayout.h"
 #include "Renderer.h"
 
-VertexArray::VertexArray()
+//VertexArray::VertexArray()
+//{
+	//GLCall(glGenVertexArrays(1, &m_RendererID));
+//}
+
+/*VertexArray::VertexArray(bool Generate)
 {
-	GLCall(glGenVertexArrays(1, &m_RendererID));
-}
+	if (Generate)
+		GLCall(glGenVertexArrays(1, &m_RendererID));
+}*/
 
 VertexArray::~VertexArray()
 {
-	GLCall(glDeleteVertexArrays(1, &m_RendererID));
+	if (!moved && Initialized)
+	{
+		GLCall(glDeleteVertexArrays(1, &m_RendererID));
+	}
 }
 
 void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout)
 {
+
+	GLCall(glGenVertexArrays(1, &m_RendererID));
+	Initialized = true;
+
 	Bind();
 	vb.Bind();
 	const auto& elements = layout.GetElements();
@@ -28,12 +41,46 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 	}
 }
 
+VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
+{
+	// TODO: insert return statement here
+	this->m_RendererID = other.m_RendererID;
+	this->Initialized = true;
+	other.moved = true;
+	other.~VertexArray();
+
+	return *this;
+}
+
+VertexArray& VertexArray::operator=(VertexArray& other) noexcept
+{
+	// TODO: insert return statement here
+	this->m_RendererID = other.m_RendererID;
+	this->Initialized = true;
+	other.moved = true;
+	other.~VertexArray();
+
+	return *this;
+}
+
+VertexArray::VertexArray(VertexArray&& other)
+{
+	this->m_RendererID = other.m_RendererID;
+	other.moved = true;
+}
+
 void VertexArray::Bind() const
 {
-	GLCall(glBindVertexArray(m_RendererID));
+	if (Initialized)
+	{
+		GLCall(glBindVertexArray(m_RendererID));
+	}
 }
 
 void VertexArray::Unbind() const
 {
-	GLCall(glBindVertexArray(0));
+	if (Initialized)
+	{
+		GLCall(glBindVertexArray(0));
+	}
 }

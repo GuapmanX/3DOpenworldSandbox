@@ -18,8 +18,10 @@ private:
 	IndexBuffer m_IndexBuffer;
 	bool Created = false;
 public:
+	BufferObject() = default;
 	BufferObject(const void* VB, unsigned int VB_SIZE, unsigned int IB[], unsigned int IB_SIZE, std::vector<unsigned int> BufferLayout);
 	~BufferObject();
+	BufferObject& operator=(BufferObject&& other) noexcept;
 
 	inline VertexArray& GetVA() { return m_VertexArray; };
 	inline IndexBuffer& GetIB() { return m_IndexBuffer; };

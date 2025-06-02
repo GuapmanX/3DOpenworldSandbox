@@ -12,7 +12,7 @@ private:
 public:
 	CubeMap(std::array<std::string, 6> faces);
 	CubeMap(CubeMap&& other) noexcept;
-	CubeMap();
+	CubeMap() = default;
 
 	~CubeMap();
 

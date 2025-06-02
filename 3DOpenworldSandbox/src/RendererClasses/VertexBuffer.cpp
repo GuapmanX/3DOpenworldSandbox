@@ -11,16 +11,20 @@ VertexBuffer::VertexBuffer(const void* data, unsigned int size, unsigned int usa
     Initialized = true;
 }
 
-VertexBuffer::VertexBuffer()
-    :m_RendererID(0)
+/*VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept
 {
-
-}
+    this->m_RendererID = other.m_RendererID;
+    other.m_RendererID = 0;
+    other.Moved = true;
+    other.~VertexBuffer();
+    this->Initialized = true;
+}*/
 
 VertexBuffer::~VertexBuffer()
 {
     if (Initialized && !Moved)
     {
+        std::cout << "deleted" << std::endl;
         GLCall(glDeleteBuffers(1, &m_RendererID));
     }
 }
@@ -28,6 +32,17 @@ VertexBuffer::~VertexBuffer()
 //This should fix overriding the old class by just replacing the id(which is the only unique thing in buffers)
 VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
 {
+    this->m_RendererID = other.m_RendererID;
+    other.m_RendererID = 0;
+    other.Moved = true;
+    other.~VertexBuffer();
+    this->Initialized = true;
+
+    return *this;
+}
+VertexBuffer& VertexBuffer::operator=(VertexBuffer& other) noexcept
+{
+    // TODO: insert return statement here
     this->m_RendererID = other.m_RendererID;
     other.m_RendererID = 0;
     other.Moved = true;

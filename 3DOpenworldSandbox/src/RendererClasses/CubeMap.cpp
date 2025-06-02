@@ -37,11 +37,6 @@ CubeMap::CubeMap(std::array<std::string, 6> faces)
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
-CubeMap::CubeMap()
-	:m_Width(0), m_Height(0), m_BPP(0), m_TextureID(0)
-{
-
-}
 
 
 

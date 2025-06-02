@@ -16,15 +16,12 @@ Shader::Shader(const std::string& filepath)
     Initialized = true;
 }
 
-Shader::Shader()
-{
-}
-
 Shader::~Shader()
 {
     if (Initialized && !Moved)
     {
-        //std::cout << m_RendererID << std::endl;
+     
+        std::cout << "destroyed" << std::endl;
         GLCall(glDeleteProgram(m_RendererID));
     }
 }

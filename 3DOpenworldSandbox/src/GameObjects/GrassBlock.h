@@ -8,6 +8,7 @@ class GrassBlock
 {
 private:
 	   RenderObject m_RenderBlock;
+	   CubeMap CM;
 	   //ShaderObject m_ShaderBlock;
 public:
 	GrassBlock();

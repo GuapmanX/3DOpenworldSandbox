@@ -78,10 +78,10 @@
     <ClCompile Include="src\GameClasses\ShaderObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\3DObjectOOP.cpp">
+    <ClCompile Include="src\GameObjects\GrassBlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameObjects\GrassBlock.cpp">
+    <ClCompile Include="src\3DObjectOOP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1007,10 +1007,10 @@
     <ClInclude Include="src\GameClasses\ShaderObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameObjects\GrassBlock.h">
+    <ClInclude Include="src\Shapes\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Shapes\Cube.h">
+    <ClInclude Include="src\GameObjects\GrassBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

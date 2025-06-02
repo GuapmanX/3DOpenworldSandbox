@@ -31,6 +31,7 @@
 #include "GameCore/Camera.h"
 #include "GameCore/Time.h"
 #include <functional>
+#include "GameObjects/GrassBlock.h"
 
 
 struct Vector3
@@ -155,6 +156,8 @@ void processInput(GLFWwindow* window)
         Camera::SetPosition(Camera::GetPosition() + (glm::cross(Camera::GetDirection(), upVector) * Time::GetDeltaTime() * Camera::GetCameraSpeed()));
 };
 
+void InitBuffer();
+
 int main(void)
 {
 
@@ -190,6 +193,8 @@ int main(void)
 
     if (glewInit() != GLEW_OK)
         std::cout << "Error!" << std::endl;
+
+    InitBuffer();
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
@@ -238,9 +243,10 @@ int main(void)
              22, 23, 20  // second triangle
         };
 
-        std::vector<unsigned int> Layout = { 3, 3, 2 };
+        /*std::vector<unsigned int> Layout = {3, 3, 2};
 
-        BufferObject MinecraftBlockVB(&positions, sizeof(Cube), indices, 36, Layout);
+        BufferObject MinecraftBlockVB;
+        MinecraftBlockVB = BufferObject(&positions, sizeof(Cube), indices, 36, Layout);
 
 
         std::array<std::string, 6> texturesCB = {
@@ -255,40 +261,17 @@ int main(void)
         CubeMap CM(texturesCB);
 
 
-        std::function<void(Shader& SHADER)> shaderRuntime = [&](Shader& SHADER) {
-            SHADER.Bind();
+        Shader ShaderOBJ;
+        ShaderOBJ = Shader("res/shaders/3DObjectCM.shader");
 
+        ShaderOBJ.Bind();
+        CM.Bind(0);
+        ShaderOBJ.SetUniform1i("u_Texture", 0);
+        ShaderOBJ.Unbind();
 
-            float Colorval = glm::abs(glm::cos(glfwGetTime()));
-            std::cout << Colorval << std::endl;
-            SHADER.SetUniform4f("u_Color", Colorval,Colorval,Colorval,1);
+        RenderObject MCBLOCK(&MinecraftBlockVB, &ShaderOBJ);*/
 
-            SHADER.Unbind();
-        };
-
-        std::function<void(Shader& SHADER)> shaderInitializer = [&](Shader& SHADER) {
-            SHADER.Bind();
-            CM.Bind(0);
-            SHADER.SetUniform1i("u_Texture", 0);
-            SHADER.Unbind();
-         };
-
-        ShaderObject ShaderOBJ("res/shaders/3DObjectCM.shader",shaderRuntime, shaderInitializer);
-        RenderObject MCBLOCK(&MinecraftBlockVB, &ShaderOBJ);
-
-
-
-
-
-     
-
-       
-
-
-
-        
-
-
+        GrassBlock Block;
 
         
         Renderer renderer;
@@ -326,7 +309,7 @@ int main(void)
             /* Render here */
             GLCall(glClearColor(0.3f, 0.3f, 0.3f, 0.0f));
             renderer.Clear();
-
+             
 
             processInput(window);
             ImGui_ImplOpenGL3_NewFrame();
@@ -336,8 +319,10 @@ int main(void)
 
 
             Camera::Update();
-            MCBLOCK.Draw(Time::GetDeltaTime());
 
+
+            //MCBLOCK.Draw(Time::GetDeltaTime());
+            Block.Update(Time::GetDeltaTime());
 
 
 

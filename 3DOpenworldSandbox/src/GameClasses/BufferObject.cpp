@@ -28,8 +28,21 @@ BufferObject::BufferObject(const void* VB, unsigned int VB_SIZE, unsigned int IB
     m_VertexArray.Unbind();
     m_IndexBuffer.Unbind();
     m_IndexBuffer.Unbind();
+    Created = true;
 };
 
 BufferObject::~BufferObject()
 {
+}
+
+BufferObject& BufferObject::operator=(BufferObject&& other) noexcept
+{
+    // TODO: insert return statement here
+    this->m_VertexBuffer = other.m_VertexBuffer;
+    this->m_IndexBuffer = other.m_IndexBuffer;
+    this->m_VertexArray = other.m_VertexArray;
+   
+
+
+    return *this;
 };
