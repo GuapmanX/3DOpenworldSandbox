@@ -1,12 +1,12 @@
-#include "GrassBlock.h"
+#include "Light_Block.h"
 #include "Shapes/Cube.h"
 #include <array>
+#include "glm/gtc/matrix_transform.hpp"
 
+static BufferObject GB_BUFFER;
+static Shader GB_SHADER;
 
-BufferObject GB_BUFFER;
-Shader GB_SHADER;
-
-std::array<std::string, 6> GB_FACES = {
+static std::array<std::string, 6> GB_FACES = {
     "res/textures/GrassBlockSide.png", //RIGHT
     "res/textures/GrassBlockSide.png", //LEFT
     "res/textures/GrassBlockTop.png",//TOP
@@ -15,7 +15,7 @@ std::array<std::string, 6> GB_FACES = {
     "res/textures/GrassBlockSide.png", //REAR
 };
 
-void InitBuffer()
+void InitLightBuffer()
 {
 	//unsigned int IBBuffer[36];
     //bool Populated = PopulateCubeIndexBuffer(IBBuffer);
@@ -45,15 +45,16 @@ void InitBuffer()
          20, 21, 22, // first triangle
          22, 23, 20  // second triangle
     };
-	std::vector<unsigned int> Layout = { 3, 3, 2 };
+	std::vector<unsigned int> Layout = { 3, 3, 2, 3 };
 	Cube Ps = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
 
 	GB_BUFFER = BufferObject(&Ps, sizeof(Cube), IBBuffer, 36, Layout);
-	GB_SHADER = Shader("res/shaders/3DObjectCM.shader");
+	GB_SHADER = Shader("res/shaders/3DObjectLight.shader");
 }
 
 
-GrassBlock::GrassBlock()
+LightBlock::LightBlock(glm::vec3 Position)
+    : m_ModelMatrix(1.0f), m_Position(Position), m_Rotation(glm::vec3(0.0f))
 {
 	m_RenderBlock.addBufferObject(&GB_BUFFER);
 	m_RenderBlock.addShaderObject(&GB_SHADER);
@@ -61,10 +62,12 @@ GrassBlock::GrassBlock()
     Shader& tsh = m_RenderBlock.GetShader();
 
     tsh.Bind();
-    CM = CubeMap(GB_FACES);
-    CM.Bind(0);
+    m_cubeMap = CubeMap(GB_FACES);
+    m_cubeMap.Bind(0);
     tsh.SetUniform1i("u_Texture", 0);
     tsh.Unbind();
+
+    SetLightColor(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 
 
 	//BufferObject GB_BUFFER;//(&Ps, sizeof(Cube), IBBuffer, 36, Layout);
@@ -72,11 +75,37 @@ GrassBlock::GrassBlock()
 
 }
 
-GrassBlock::~GrassBlock()
+LightBlock::~LightBlock()
 {
 }
 
-void GrassBlock::Update(float deltaTime)
+void LightBlock::Update(const float& deltaTime)
 {
-	m_RenderBlock.Draw(deltaTime);
+    m_ModelMatrix = glm::translate(glm::mat4(1.0f), m_Position);
+    m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(m_Rotation.y), glm::vec3(0.0f, 0.0f, 1.0f));
+    m_ModelMatrix = glm::rotate(m_ModelMatrix, glm::radians(m_Rotation.z), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	m_RenderBlock.Draw(deltaTime,m_ModelMatrix);
+}
+
+void LightBlock::ChangeTexture(const std::array<std::string, 6>& FACES)
+{
+    Shader& tsh = m_RenderBlock.GetShader();
+
+    tsh.Bind();
+    m_cubeMap.Unbind();
+    m_cubeMap.~CubeMap();
+    m_cubeMap = CubeMap(FACES);
+    m_cubeMap.Bind(0);
+    tsh.SetUniform1i("u_Texture", 0);
+    tsh.Unbind();
+}
+
+void LightBlock::SetLightColor(const glm::vec4& Color)
+{
+    Shader& SHADER = m_RenderBlock.GetShader();
+    SHADER.Bind();
+    SHADER.SetUniform4f("u_Color", Color.r, Color.g, Color.b, Color.a);
+    m_Color = Color;
 }

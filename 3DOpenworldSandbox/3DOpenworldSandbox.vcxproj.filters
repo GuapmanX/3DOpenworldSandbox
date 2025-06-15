@@ -78,10 +78,13 @@
     <ClCompile Include="src\GameClasses\ShaderObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameObjects\GrassBlock.cpp">
+    <ClCompile Include="src\GameObjects\Block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\3DObjectOOP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObjects\Light_Block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1010,7 +1013,10 @@
     <ClInclude Include="src\Shapes\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameObjects\GrassBlock.h">
+    <ClInclude Include="src\GameObjects\Block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObjects\Light_Block.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1431,5 +1437,6 @@
     <None Include="res\shaders\3DObject.shader" />
     <None Include="res\shaders\3DObjectCM.shader" />
     <None Include="res\shaders\3DObjectLighting.shader" />
+    <None Include="res\shaders\3DObjectLight.shader" />
   </ItemGroup>
 </Project>

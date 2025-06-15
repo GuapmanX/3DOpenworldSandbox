@@ -15,7 +15,7 @@ public:
 	RenderObject() = default;
 	RenderObject(BufferObject* p_Buffer, Shader* p_Shader);
 	~RenderObject();
-	void Draw(float DeltaTime);
+	void Draw(const float DeltaTime,const glm::mat4 &Model);
 	inline void addBufferObject(BufferObject* p_Buffer) { m_Buffer = p_Buffer; }
 	inline void addShaderObject(Shader* p_Shader) { m_Shader = p_Shader; }
 	inline Shader& GetShader() { return *m_Shader; }

@@ -8,15 +8,6 @@
 #include <fstream>
 #include <sstream>
 
-//#include "RendererClasses/Renderer.h"
-//#include "RendererClasses/IndexBuffer.h"
-//#include "RendererClasses/VertexBufferLayout.h"
-//#include "RendererClasses/VertexBuffer.h"
-//#include "RendererClasses/VertexArray.h"
-//#include "RendererClasses/Shader.h"
-//#include "RendererClasses/Texture.h"
-//#include "RendererClasses/CubeMap.h"
-
 #include "GameClasses/BufferObject.h"
 #include "GameClasses/ShaderObject.h"
 #include "GameClasses/RenderObject.h"
@@ -31,116 +22,14 @@
 #include "GameCore/Camera.h"
 #include "GameCore/Time.h"
 #include <functional>
-#include "GameObjects/GrassBlock.h"
 
 
-struct Vector3
-{
-    float x, y, z;
-};
-
-struct RGB
-{
-    float R, G, B;
-};
-
-struct TextureCoordinates2D
-{
-    float x, y;
-};
+#include "GameObjects/Block.h"
+#include "GameObjects/Light_Block.h"
 
 
 
-struct Vertex
-{
-    Vector3 Position{ 0.0f ,0.0f, 0.0f };
-    RGB Color = { 1.0f, 0.0f, 0.0f };
-    TextureCoordinates2D TC{ 0.0f, 0.0f };
-};
 
-struct Quad
-{
-    Vertex v0, v1, v2, v3;
-};
-
-struct Cube
-{
-    Quad q0, q1, q2, q3, q4, q5;
-};
-
-static Cube CreateCube(float x, float y, float z, float size)
-{
-    Cube C;
-
-    //FRONT
-    C.q0.v0.Position = { x - size, y - size, z - size };
-    C.q0.v1.Position = { x + size, y - size, z - size };
-    C.q0.v2.Position = { x + size, y + size, z - size };
-    C.q0.v3.Position = { x - size, y + size, z - size };
-
-    C.q0.v0.TC = { 0.0f, 0.0f };
-    C.q0.v1.TC = { 1.0f, 0.0f };
-    C.q0.v2.TC = { 1.0f, 1.0f };
-    C.q0.v3.TC = { 0.0f, 1.0f };
-
-    //TOP
-    C.q1.v0.Position = { x - size, y + size, z - size };
-    C.q1.v1.Position = { x + size, y + size, z - size };
-    C.q1.v2.Position = { x + size, y + size, z + size };
-    C.q1.v3.Position = { x - size, y + size, z + size };
-
-    C.q1.v0.TC = { 0.0f, 0.0f };
-    C.q1.v1.TC = { 1.0f, 0.0f };
-    C.q1.v2.TC = { 1.0f, 1.0f };
-    C.q1.v3.TC = { 0.0f, 1.0f };
-
-    //LEFT
-    C.q2.v0.Position = { x - size, y - size, z - size };
-    C.q2.v1.Position = { x - size, y + size, z - size };
-    C.q2.v2.Position = { x - size, y + size, z + size };
-    C.q2.v3.Position = { x - size, y - size, z + size };
-
-    C.q2.v0.TC = { 0.0f, 0.0f };
-    C.q2.v1.TC = { 1.0f, 0.0f };
-    C.q2.v2.TC = { 1.0f, 1.0f };
-    C.q2.v3.TC = { 0.0f, 1.0f };
-
-
-    //RIGHT
-    C.q3.v0.Position = { x + size, y - size, z - size };
-    C.q3.v1.Position = { x + size, y + size, z - size };
-    C.q3.v2.Position = { x + size, y + size, z + size };
-    C.q3.v3.Position = { x + size, y - size, z + size };
-
-    C.q3.v0.TC = { 0.0f, 0.0f };
-    C.q3.v1.TC = { 1.0f, 0.0f };
-    C.q3.v2.TC = { 1.0f, 1.0f };
-    C.q3.v3.TC = { 0.0f, 1.0f };
-
-    //BACK
-    C.q4.v0.Position = { x - size, y - size, z + size };
-    C.q4.v1.Position = { x + size, y - size, z + size };
-    C.q4.v2.Position = { x + size, y + size, z + size };
-    C.q4.v3.Position = { x - size, y + size, z + size };
-
-    C.q4.v0.TC = { 0.0f, 0.0f };
-    C.q4.v1.TC = { 1.0f, 0.0f };
-    C.q4.v2.TC = { 1.0f, 1.0f };
-    C.q4.v3.TC = { 0.0f, 1.0f };
-
-    //BOTTOM
-    C.q5.v0.Position = { x - size, y - size, z + size };
-    C.q5.v1.Position = { x + size, y - size, z + size };
-    C.q5.v2.Position = { x + size, y - size, z - size };
-    C.q5.v3.Position = { x - size, y - size, z - size };
-
-    C.q5.v0.TC = { 0.0f, 0.0f };
-    C.q5.v1.TC = { 1.0f, 0.0f };
-    C.q5.v2.TC = { 1.0f, 1.0f };
-    C.q5.v3.TC = { 0.0f, 1.0f };
-
-    return C;
-};
 
 
 
@@ -156,7 +45,6 @@ void processInput(GLFWwindow* window)
         Camera::SetPosition(Camera::GetPosition() + (glm::cross(Camera::GetDirection(), upVector) * Time::GetDeltaTime() * Camera::GetCameraSpeed()));
 };
 
-void InitBuffer();
 
 int main(void)
 {
@@ -195,6 +83,7 @@ int main(void)
         std::cout << "Error!" << std::endl;
 
     InitBuffer();
+    InitLightBuffer();
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
@@ -214,34 +103,7 @@ int main(void)
 
 
 
-        Cube positions = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
 
-
-        unsigned int indices[] = {
-            // front
-             0, 1, 2, // first triangle
-             2, 3, 0, // second triangle
-
-             // top
-             4, 5, 6, // first triangle
-             6, 7, 4, // second triangle
-
-             // left
-             8, 9, 10,  // first triangle
-             10, 11, 8, // second triangle
-
-             // right
-             14, 13, 12, // 12, 13, 14, // first triangle
-             12, 15, 14, // 14, 15, 12, // second triangle
-
-             // back
-             18, 17, 16, // 16, 17, 18, // first triangle
-             16, 19, 18, // 18, 19, 16, // second triangle
-
-             // bottom
-             20, 21, 22, // first triangle
-             22, 23, 20  // second triangle
-        };
 
         /*std::vector<unsigned int> Layout = {3, 3, 2};
 
@@ -271,13 +133,12 @@ int main(void)
 
         RenderObject MCBLOCK(&MinecraftBlockVB, &ShaderOBJ);*/
 
-        GrassBlock Block;
+        Block FirstBlock(glm::vec3(1.0f,1.0f,1.0f));
+        LightBlock LightSource(glm::vec3(-2.0f, -2.0f, -2.0f));
+        LightSource.SetLightColor(glm::vec4(0.6f, 0.6f, 0.6f, 1.0f));
 
         
         Renderer renderer;
-
-
-        glm::vec3 ObjectRotation(0.0f, 0.0f, 0.0f);
 
 
         double centerX = HeightX / 2.0;
@@ -285,13 +146,12 @@ int main(void)
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
-
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
             Time::UpdateDeltaTime();
 
+            
             //std::cout << DT.GetDeltaTime() << std::endl;
 
             ///////CAMERA SYSTEM//////////////
@@ -320,19 +180,16 @@ int main(void)
 
             Camera::Update();
 
+            FirstBlock.m_Position = glm::vec3(cos(glfwGetTime()) * 3, cos(glfwGetTime()) * 3, cos(glfwGetTime()) * 3);
+            FirstBlock.ApplyLighting(LightSource.GetColor(), LightSource.m_Position);
+            FirstBlock.Update(Time::GetDeltaTime());
 
-            //MCBLOCK.Draw(Time::GetDeltaTime());
-            Block.Update(Time::GetDeltaTime());
-
-
-
-            //shader.Bind();
-            //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
-           // shader.SetUniformMat4f("u_MVP", mvp);
+            LightSource.Update(Time::GetDeltaTime());
 
 
 
-            // renderer.Draw(va, ib, shader);
+
+
 
             ImGui::Begin("Hello, world!");
             ImGui::Text("framerate = %f",1.0f/Time::GetDeltaTime());

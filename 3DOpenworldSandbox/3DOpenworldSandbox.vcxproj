@@ -148,7 +148,8 @@
     <ClCompile Include="src\GameClasses\ShaderObject.cpp" />
     <ClCompile Include="src\GameCore\Camera.cpp" />
     <ClCompile Include="src\GameCore\Time.cpp" />
-    <ClCompile Include="src\GameObjects\GrassBlock.cpp" />
+    <ClCompile Include="src\GameObjects\Block.cpp" />
+    <ClCompile Include="src\GameObjects\Light_Block.cpp" />
     <ClCompile Include="src\RendererClasses\CubeMap.cpp" />
     <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
     <ClCompile Include="src\RendererClasses\Renderer.cpp" />
@@ -457,7 +458,8 @@
     <ClInclude Include="src\GameClasses\ShaderObject.h" />
     <ClInclude Include="src\GameCore\Camera.h" />
     <ClInclude Include="src\GameCore\Time.h" />
-    <ClInclude Include="src\GameObjects\GrassBlock.h" />
+    <ClInclude Include="src\GameObjects\Block.h" />
+    <ClInclude Include="src\GameObjects\Light_Block.h" />
     <ClInclude Include="src\RendererClasses\CubeMap.h" />
     <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
     <ClInclude Include="src\RendererClasses\Renderer.h" />
@@ -474,6 +476,7 @@
   <ItemGroup>
     <None Include="res\shaders\3DObjectCM.shader" />
     <None Include="res\shaders\3DObject.shader" />
+    <None Include="res\shaders\3DObjectLight.shader" />
     <None Include="res\shaders\3DObjectLighting.shader" />
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\BatchRendering.shader" />
