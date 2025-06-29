@@ -21,20 +21,43 @@ Texture::Texture(const std::string& path)
 
 	if (m_LocalBuffer)
 		stbi_image_free(m_LocalBuffer);
+
+	Initialized = true;
+}
+
+Texture& Texture::operator=(Texture&& other) noexcept
+{
+	this->m_RendererID = other.m_RendererID;
+	other.m_RendererID = 0;
+	other.Moved = true;
+
+	return *this;
+}
+
+Texture::Texture(Texture&& other) noexcept
+{
+	this->m_RendererID = other.m_RendererID;
+	other.m_RendererID = 0;
+	other.Moved = true;
 }
 
 Texture::~Texture()
 {
-	GLCall(glDeleteTextures(1, &m_RendererID));
+	if (Initialized)
+		GLCall(glDeleteTextures(1, &m_RendererID));
 }
 
 void Texture::Bind(unsigned int slot) const
 {
-	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+	if (Initialized) {
+		GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+	}
 }
 
 void Texture::Unbind() const
 {
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	if (Initialized && !Moved) {
+		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	}
 }

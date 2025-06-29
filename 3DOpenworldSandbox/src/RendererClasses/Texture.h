@@ -10,9 +10,15 @@ private:
 	std::string m_FilePath;
 	unsigned char* m_LocalBuffer;
 	int m_Width, m_Height, m_BPP;
+	bool Initialized = false;
+	bool Moved = false;
 public:
+	Texture() = default;
 	Texture(const std::string& path);
 	~Texture();
+
+	Texture& operator=(Texture&& other) noexcept;
+	Texture(Texture&& other) noexcept;
 
 	void Bind(unsigned int slot = 0) const;
 	void Unbind() const;

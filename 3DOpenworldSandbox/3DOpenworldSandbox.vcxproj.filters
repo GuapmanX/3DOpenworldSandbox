@@ -81,10 +81,10 @@
     <ClCompile Include="src\GameObjects\Block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\3DObjectOOP.cpp">
+    <ClCompile Include="src\GameObjects\Light_Block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameObjects\Light_Block.cpp">
+    <ClCompile Include="src\ChunkTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1438,5 +1438,6 @@
     <None Include="res\shaders\3DObjectCM.shader" />
     <None Include="res\shaders\3DObjectLighting.shader" />
     <None Include="res\shaders\3DObjectLight.shader" />
+    <None Include="res\shaders\3DObjectRegTex.shader" />
   </ItemGroup>
 </Project>

@@ -27,6 +27,9 @@
 #include "GameObjects/Block.h"
 #include "GameObjects/Light_Block.h"
 
+#include "Shapes/Cube.h"
+#include "Texture.h"
+
 
 
 
@@ -93,6 +96,9 @@ int main(void)
     ImGui_ImplOpenGL3_Init();
 
 
+        const int ChunkWidth = 16;
+        const int ChunkHeight = 32;
+        unsigned int* Indices = new unsigned int[ChunkWidth * ChunkWidth * ChunkHeight * 36];
     {
         GLCall(glEnable(GL_BLEND)); //Enables blending
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); //tells what the blended pixels should look like
@@ -101,17 +107,70 @@ int main(void)
         GLCall(glEnable(GL_DEPTH_TEST));
         GLCall(glDepthFunc(GL_LESS));
 
+        VertexArray va;
+
+
+        VertexBuffer vb(nullptr, sizeof(Cube) * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
+
+
+        /*int arr[5];
+        std::vector<int> v_arr;
+        v_arr.push_back(5);
+        v_arr.push_back(6);
+        v_arr.push_back(7);
+        v_arr.push_back(8);
+        v_arr.push_back(9);
+        v_arr.push_back(5);
+        v_arr.push_back(6);
+        v_arr.push_back(7);
+        v_arr.push_back(8);
+        v_arr.push_back(9);
+
+        std::cout << sizeof(arr) << std::endl;
+        std::cout << sizeof(v_arr) << std::endl;*/
+        Cube CubeForChunk = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
+        Cube CubeForChunk2 = CreateCube(1.0f, 1.0f, 0.0f, 0.5f);
+
+        //vb.SetBufferData(&CubeForChunk,0,sizeof(Cube));
+        vb.SetBufferData(&CubeForChunk2, 0, sizeof(Cube));
+        
+        VertexBufferLayout vbl;
+        vbl.Push<float>(3);
+        vbl.Push<float>(3);
+        vbl.Push<float>(2);
+        vbl.Push<float>(3);
+        vbl.Push<float>(1);
+
+        va.AddBuffer(vb, vbl);
+
+        
+        for (int face = 0; face < ChunkWidth * ChunkWidth * ChunkHeight * 6; face++)
+        {
+            Indices[0 + face * 6] = 0 + face * 4;
+            Indices[1 + face * 6] = 1 + face * 4;
+            Indices[2 + face * 6] = 2 + face * 4;
+            Indices[3 + face * 6] = 2 + face * 4;
+            Indices[4 + face * 6] = 3 + face * 4;
+            Indices[5 + face * 6] = 0 + face * 4;
+        }
+
+        IndexBuffer IB(Indices, ChunkWidth * ChunkWidth * ChunkHeight * 36);
+
+        Shader CubeShader("res/shaders/3DObjectRegTex.shader");
 
 
 
+        //CM.Bind(0);
+        //shader.SetUniform1i("u_Texture", 0);
+        //CubeShader.Bind();
 
-        /*std::vector<unsigned int> Layout = {3, 3, 2};
+        //CubeMap Textures(textures);
+        //Textures.Bind(0);
+        //CubeShader.SetUniform1i("u_Texture", 0);
 
-        BufferObject MinecraftBlockVB;
-        MinecraftBlockVB = BufferObject(&positions, sizeof(Cube), indices, 36, Layout);
 
-
-        std::array<std::string, 6> texturesCB = {
+        CubeShader.Bind();
+        std::array<std::string, 6> textureFiles = {
             "res/textures/GrassBlockSide.png", //RIGHT
             "res/textures/GrassBlockSide.png", //LEFT
             "res/textures/GrassBlockTop.png",//TOP
@@ -120,24 +179,45 @@ int main(void)
             "res/textures/GrassBlockSide.png", //REAR
         };
 
-        CubeMap CM(texturesCB);
+        //std::array<Texture, 6> Textures;
+
+        /*for (int i = 0; i < Textures.size(); i++) {
+            Textures[i] = Texture(textureFiles[i]);
+            Textures[i].Bind(i);
+        }*/
+        Texture Tex1(textureFiles[0]);
+        Texture Tex2(textureFiles[1]);
+        Texture Tex3(textureFiles[2]);
+        Texture Tex4(textureFiles[3]);
+        Texture Tex5(textureFiles[4]);
+        Texture Tex6(textureFiles[5]);
+
+        Tex1.Bind(0);
+        Tex2.Bind(1);
+        Tex3.Bind(2);
+        Tex4.Bind(3);
+        Tex5.Bind(4);
+        Tex6.Bind(5);
+
+        //Texture TextureOne("res/textures/GrassBlockSide.png");
+        //Texture TextureTwo("res/textures/GrassBlockTop.png");
+
+        //TextureOne.Bind(0);
+        //TextureOne.Bind(1);
 
 
-        Shader ShaderOBJ;
-        ShaderOBJ = Shader("res/shaders/3DObjectCM.shader");
 
-        ShaderOBJ.Bind();
-        CM.Bind(0);
-        ShaderOBJ.SetUniform1i("u_Texture", 0);
-        ShaderOBJ.Unbind();
+        int samplers[6] = { 0,1,2,3,4,5 };
+        CubeShader.SetUniform1iv("u_Textures", 6, samplers);
+       // CubeShader.SetUniform1i("u_Texture", 0);
 
-        RenderObject MCBLOCK(&MinecraftBlockVB, &ShaderOBJ);*/
 
-        Block FirstBlock(glm::vec3(1.0f,1.0f,1.0f));
-        //LightBlock LightSource(glm::vec3(-2.0f, -2.0f, -2.0f));
-        //LightSource.SetLightColor(glm::vec4(0.6f, 0.6f, 0.6f, 1.0f));
 
-        
+        va.Unbind();
+        CubeShader.Unbind();
+        vb.Unbind();
+        IB.Unbind();
+
         Renderer renderer;
 
 
@@ -151,7 +231,7 @@ int main(void)
         {
             Time::UpdateDeltaTime();
 
-            
+
             //std::cout << DT.GetDeltaTime() << std::endl;
 
             ///////CAMERA SYSTEM//////////////
@@ -169,7 +249,7 @@ int main(void)
             /* Render here */
             GLCall(glClearColor(0.3f, 0.3f, 0.3f, 0.0f));
             renderer.Clear();
-             
+
 
             processInput(window);
             ImGui_ImplOpenGL3_NewFrame();
@@ -180,11 +260,29 @@ int main(void)
 
             Camera::Update();
 
-            FirstBlock.m_Position = glm::vec3(cos(glfwGetTime()) * 3, cos(glfwGetTime()) * 3, cos(glfwGetTime()) * 3);
-           // FirstBlock.ApplyLighting(LightSource.GetColor(), LightSource.m_Position);
-            FirstBlock.Update(Time::GetDeltaTime());
 
-            //LightSource.Update(Time::GetDeltaTime());
+            //FirstBlock.Update(Time::GetDeltaTime());
+
+            glm::mat4 View = Camera::GetViewMatrix();
+            glm::mat4 Projection = Camera::GetProjection();
+            glm::mat4 Model = glm::mat4(1.0f);
+
+            //glm::mat4 mvp = Projection * View * Model;
+
+
+            //m_Shader->ExcecuteShader();
+
+
+
+            //m_Shader->SetUniformMat4f("u_MVP", mvp);
+            CubeShader.Bind();
+            CubeShader.SetUniformMat4f("Model", Model);
+            CubeShader.SetUniformMat4f("View", View);
+            CubeShader.SetUniformMat4f("Projection", Projection);
+            CubeShader.Unbind();
+
+            renderer.Draw(va, IB, CubeShader);
+
 
 
 
@@ -192,7 +290,7 @@ int main(void)
 
 
             ImGui::Begin("Hello, world!");
-            ImGui::Text("framerate = %f",1.0f/Time::GetDeltaTime());
+            ImGui::Text("framerate = %f", 1.0f / Time::GetDeltaTime());
             ImGui::End();
 
             ImGui::Render();
@@ -205,6 +303,7 @@ int main(void)
             glfwPollEvents();
         }
     }
+    delete[] Indices;
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

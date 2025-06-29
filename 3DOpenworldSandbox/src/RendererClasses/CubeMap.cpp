@@ -51,6 +51,9 @@ CubeMap::~CubeMap()
 CubeMap& CubeMap::operator=(CubeMap&& other) noexcept
 {
 	this->m_TextureID = other.m_TextureID;
+	this->m_Height = other.m_Height;
+	this->m_Width = other.m_Width;
+	this->m_BPP = other.m_BPP;
 	other.m_TextureID = 0;
 	other.Moved = true;
 
@@ -60,6 +63,9 @@ CubeMap& CubeMap::operator=(CubeMap&& other) noexcept
 CubeMap::CubeMap(CubeMap&& other) noexcept
 {
 	this->m_TextureID = other.m_TextureID;
+	this->m_Height = other.m_Height;
+	this->m_Width = other.m_Width;
+	this->m_BPP = other.m_BPP;
 	other.m_TextureID = 0;
 	other.Moved = true;
 }

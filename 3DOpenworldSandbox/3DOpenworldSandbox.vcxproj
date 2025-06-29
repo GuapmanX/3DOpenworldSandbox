@@ -133,7 +133,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\3DObjectOOP.cpp" />
     <ClCompile Include="src\Addons\glm\detail\glm.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui_demo.cpp" />
@@ -143,6 +142,7 @@
     <ClCompile Include="src\Addons\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\Addons\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Addons\stb_image\stb_image.cpp" />
+    <ClCompile Include="src\ChunkTest.cpp" />
     <ClCompile Include="src\GameClasses\BufferObject.cpp" />
     <ClCompile Include="src\GameClasses\RenderObject.cpp" />
     <ClCompile Include="src\GameClasses\ShaderObject.cpp" />
@@ -474,6 +474,7 @@
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\shaders\3DObjectRegTex.shader" />
     <None Include="res\shaders\3DObjectCM.shader" />
     <None Include="res\shaders\3DObject.shader" />
     <None Include="res\shaders\3DObjectLight.shader" />

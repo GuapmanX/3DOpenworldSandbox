@@ -50,12 +50,12 @@ void InitBuffer()
 	Cube Ps = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
 
 	GB_BUFFER = BufferObject(&Ps, sizeof(Cube), IBBuffer, 36, Layout);
-	GB_SHADER = Shader("res/shaders/3DObjectLighting.shader");
+	GB_SHADER = Shader("res/shaders/3DObjectCM.shader");
 }
 
 
 Block::Block(const glm::vec3& Position)
-    : m_ModelMatrix(1.0f), m_Position(Position)
+    : m_ModelMatrix(1.0f), m_Position(Position), m_Rotation(glm::vec3(0.0f,0.0f,0.0f))
 {
 	m_RenderBlock.addBufferObject(&GB_BUFFER);
 	m_RenderBlock.addShaderObject(&GB_SHADER);
@@ -110,10 +110,10 @@ void Block::ApplyLighting(const glm::vec4& SourceColor, glm::vec3& SourcePositio
     float a = 1 / glm::length(SourcePosition - m_Position);
 
     glm::vec3 CamPos = Camera::GetPosition();
-    SHADER.SetUniform3f("u_CameraPosition",CamPos.x,CamPos.y,CamPos.z);
+    //SHADER.SetUniform3f("u_CameraPosition",CamPos.x,CamPos.y,CamPos.z);
 
-    SHADER.SetUniform3f("u_LightPosition", SourcePosition.x, SourcePosition.y, SourcePosition.z);
-    SHADER.SetUniform1f("u_LightDistance",a);
-    SHADER.SetUniform4f("u_LightColor", SourceColor.r,SourceColor.g,SourceColor.b,SourceColor.a);
+    //SHADER.SetUniform3f("u_LightPosition", SourcePosition.x, SourcePosition.y, SourcePosition.z);
+    //SHADER.SetUniform1f("u_LightDistance",a);
+    //SHADER.SetUniform4f("u_LightColor", SourceColor.r,SourceColor.g,SourceColor.b,SourceColor.a);
     SHADER.Unbind();
 }

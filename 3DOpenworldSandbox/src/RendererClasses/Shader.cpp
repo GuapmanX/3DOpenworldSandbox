@@ -20,8 +20,6 @@ Shader::~Shader()
 {
     if (Initialized && !Moved)
     {
-     
-        std::cout << "destroyed" << std::endl;
         GLCall(glDeleteProgram(m_RendererID));
     }
 }
