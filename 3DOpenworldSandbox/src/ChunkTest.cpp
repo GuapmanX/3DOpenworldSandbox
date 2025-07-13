@@ -85,8 +85,8 @@ int main(void)
     if (glewInit() != GLEW_OK)
         std::cout << "Error!" << std::endl;
 
-    InitBuffer();
-    InitLightBuffer();
+    //InitBuffer();
+    //InitLightBuffer();
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
@@ -131,6 +131,7 @@ int main(void)
         Cube CubeForChunk = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
         Cube CubeForChunk2 = CreateCube(1.0f, 1.0f, 0.0f, 0.5f);
 
+
         //vb.SetBufferData(&CubeForChunk,0,sizeof(Cube));
         vb.SetBufferData(&CubeForChunk2, 0, sizeof(Cube));
         
@@ -139,7 +140,12 @@ int main(void)
         vbl.Push<float>(3);
         vbl.Push<float>(2);
         vbl.Push<float>(3);
-        vbl.Push<float>(1);
+
+        //atlas data
+        vbl.Push<float>(2); //atlas size
+        vbl.Push<float>(2); //single texture size
+        vbl.Push<float>(2); //texture position
+        ////////
 
         va.AddBuffer(vb, vbl);
 
@@ -156,17 +162,9 @@ int main(void)
 
         IndexBuffer IB(Indices, ChunkWidth * ChunkWidth * ChunkHeight * 36);
 
-        Shader CubeShader("res/shaders/3DObjectRegTex.shader");
+        Shader CubeShader("res/shaders/3DObjectATLASEARTH.shader");
 
 
-
-        //CM.Bind(0);
-        //shader.SetUniform1i("u_Texture", 0);
-        //CubeShader.Bind();
-
-        //CubeMap Textures(textures);
-        //Textures.Bind(0);
-        //CubeShader.SetUniform1i("u_Texture", 0);
 
 
         CubeShader.Bind();
@@ -179,37 +177,9 @@ int main(void)
             "res/textures/GrassBlockSide.png", //REAR
         };
 
-        //std::array<Texture, 6> Textures;
-
-        /*for (int i = 0; i < Textures.size(); i++) {
-            Textures[i] = Texture(textureFiles[i]);
-            Textures[i].Bind(i);
-        }*/
-        Texture Tex1(textureFiles[0]);
-        Texture Tex2(textureFiles[1]);
-        Texture Tex3(textureFiles[2]);
-        Texture Tex4(textureFiles[3]);
-        Texture Tex5(textureFiles[4]);
-        Texture Tex6(textureFiles[5]);
-
-        Tex1.Bind(0);
-        Tex2.Bind(1);
-        Tex3.Bind(2);
-        Tex4.Bind(3);
-        Tex5.Bind(4);
-        Tex6.Bind(5);
-
-        //Texture TextureOne("res/textures/GrassBlockSide.png");
-        //Texture TextureTwo("res/textures/GrassBlockTop.png");
-
-        //TextureOne.Bind(0);
-        //TextureOne.Bind(1);
-
-
-
-        int samplers[6] = { 0,1,2,3,4,5 };
-        CubeShader.SetUniform1iv("u_Textures", 6, samplers);
-       // CubeShader.SetUniform1i("u_Texture", 0);
+        Texture Tex1("res/textures/terrain.png");
+        Tex1.Bind();
+        CubeShader.SetUniform1i("u_Texture", 0);
 
 
 

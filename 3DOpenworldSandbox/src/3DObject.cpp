@@ -297,7 +297,7 @@ int main(void)
 
 
         Shader shader;
-        shader = Shader("res/shaders/3DObjectLighting.shader");
+        shader = Shader("res/shaders/3DObjectCM.shader");
 
 
         shader.Bind();
@@ -397,17 +397,12 @@ int main(void)
                 Camera::Update();
 
 
-                glm::mat4 view = Camera::GetViewMatrix();
-
-                glm::mat4 projection;
-                projection = Camera::GetProjection(); //glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 100.0f);
-
-                glm::mat4 mvp = projection * view * model;
-
-
                 //shader.SetUniform4f("u_Color", 0.8f, 0.6f, 0.8f, 1.0f);
                 shader.Bind();
-                shader.SetUniformMat4f("u_MVP", mvp);
+                //shader.SetUniformMat4f("u_MVP", mvp);
+                shader.SetUniformMat4f("Projection",Camera::GetProjection());
+                shader.SetUniformMat4f("View", Camera::GetViewMatrix());
+                shader.SetUniformMat4f("Projection", model);
                 renderer.Draw(va, ib, shader);
             }
 

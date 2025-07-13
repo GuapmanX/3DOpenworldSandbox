@@ -45,10 +45,10 @@ struct Vertex
     Vector2 Position;
     TextureCoordinate texCoords;
     RGBA Color;
-    float TexID;
+    int TexID;
 };
 
-static std::array<Vertex, 4> CreateQuad(float x, float y, float size, float textureID)
+static std::array<Vertex, 4> CreateQuad(float x, float y, float size, int textureID)
 {
 
     Vertex v0;
@@ -78,7 +78,7 @@ static std::array<Vertex, 4> CreateQuad(float x, float y, float size, float text
     return { v0, v1, v2, v3 };
 };
 
-static Vertex* AddQuad(Vertex* target,float x, float y, float size, float textureID)
+static Vertex* AddQuad(Vertex* target,float x, float y, float size, int textureID)
 {
 
     target->Position = { x , y };
@@ -189,7 +189,7 @@ int main(void)
         layout.Push<float>(2); //position
         layout.Push<float>(2); //texture coordinates
         layout.Push<float>(4); //color
-        layout.Push<float>(1); // texture differentiator
+        layout.Push<int>(1); // texture differentiator
         va.AddBuffer(vb, layout);
         IndexBuffer ib(indices, MaxIndexCount);
 
@@ -245,7 +245,7 @@ int main(void)
                 }
             }
 
-            buffer = buffer = AddQuad(buffer, ANGRYPOS[0], ANGRYPOS[1], 100.0f, 0.0f);
+            buffer = AddQuad(buffer, ANGRYPOS[0], ANGRYPOS[1], 100.0f, 0);
 
 
 

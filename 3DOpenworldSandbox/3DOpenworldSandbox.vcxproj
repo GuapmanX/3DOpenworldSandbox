@@ -459,6 +459,8 @@
     <ClInclude Include="src\GameCore\Camera.h" />
     <ClInclude Include="src\GameCore\Time.h" />
     <ClInclude Include="src\GameObjects\Block.h" />
+    <ClInclude Include="src\GameObjects\Block_c.h" />
+    <ClInclude Include="src\GameObjects\Chunk.h" />
     <ClInclude Include="src\GameObjects\Light_Block.h" />
     <ClInclude Include="src\RendererClasses\CubeMap.h" />
     <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
@@ -474,7 +476,7 @@
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\3DObjectRegTex.shader" />
+    <None Include="res\shaders\3DObjectATLASEARTH.shader" />
     <None Include="res\shaders\3DObjectCM.shader" />
     <None Include="res\shaders\3DObject.shader" />
     <None Include="res\shaders\3DObjectLight.shader" />

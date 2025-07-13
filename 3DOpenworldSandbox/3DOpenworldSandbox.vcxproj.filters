@@ -1019,6 +1019,12 @@
     <ClInclude Include="src\GameObjects\Light_Block.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameObjects\Chunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObjects\Block_c.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
@@ -1439,5 +1445,6 @@
     <None Include="res\shaders\3DObjectLighting.shader" />
     <None Include="res\shaders\3DObjectLight.shader" />
     <None Include="res\shaders\3DObjectRegTex.shader" />
+    <None Include="res\shaders\3DObjectATLASEARTH.shader" />
   </ItemGroup>
 </Project>

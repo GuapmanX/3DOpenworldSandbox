@@ -1,9 +1,16 @@
 #pragma once
 #include <array>
     
+    struct AtlasData
+    {
+        float AtlasSizeX, AtlasSizeY;
+        float TextureSizeX, TextureSizeY;
+        float TexturePosX, TexturePosY;
+    };
+
     struct TextureID
     {
-        float id;
+        int id;
     };
     
     struct Vector3
@@ -34,7 +41,7 @@
         RGB Color = { 1.0f, 0.0f, 0.0f };
         TextureCoordinates2D TC{ 0.0f, 0.0f };
         NormalVector NV{ 0.0f,0.0f,0.0f };
-        TextureID TEXID{ 0.0f };
+        AtlasData AtlasData{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
     };
 
     struct Quad
@@ -67,10 +74,7 @@
         C.q0.v2.NV = { 0.0f, 0.0f, -1.0f };
         C.q0.v3.NV = { 0.0f, 0.0f, -1.0f };
 
-        C.q0.v0.TEXID.id = 0.0f;
-        C.q0.v1.TEXID.id = 0.0f;
-        C.q0.v2.TEXID.id = 0.0f;
-        C.q0.v3.TEXID.id = 0.0f;
+
 
         //TOP
         C.q1.v0.Position = { x - size, y + size, z - size };
@@ -88,10 +92,7 @@
         C.q1.v2.NV = { 0.0f, 1.0f, 0.0f };
         C.q1.v3.NV = { 0.0f, 1.0f, 0.0f };
 
-        C.q1.v0.TEXID.id = 1.0f;
-        C.q1.v1.TEXID.id = 1.0f;
-        C.q1.v2.TEXID.id = 1.0f;
-        C.q1.v3.TEXID.id = 1.0f;
+
 
         //LEFT
         C.q2.v0.Position = { x - size, y - size, z - size };
@@ -109,10 +110,7 @@
         C.q2.v2.NV = { -1.0f, 0.0f, 0.0f };
         C.q2.v3.NV = { -1.0f, 0.0f, 0.0f };
 
-        C.q2.v0.TEXID.id = 2.0f;
-        C.q2.v1.TEXID.id = 2.0f;
-        C.q2.v2.TEXID.id = 2.0f;
-        C.q2.v3.TEXID.id = 2.0f;
+
 
 
         //RIGHT
@@ -131,10 +129,7 @@
         C.q3.v2.NV = { 1.0f, 0.0f, 0.0f };
         C.q3.v3.NV = { 1.0f, 0.0f, 0.0f };
 
-        C.q3.v0.TEXID.id = 3.0f;
-        C.q2.v1.TEXID.id = 3.0f;
-        C.q2.v2.TEXID.id = 3.0f;
-        C.q2.v3.TEXID.id = 3.0f;
+ 
 
         //BACK
         C.q4.v0.Position = { x - size, y - size, z + size };
@@ -152,10 +147,7 @@
         C.q4.v2.NV = { 0.0f, 0.0f, 1.0f };
         C.q4.v3.NV = { 0.0f, 0.0f, 1.0f };
 
-        C.q4.v0.TEXID.id = 4.0f;
-        C.q4.v1.TEXID.id = 4.0f;
-        C.q4.v2.TEXID.id = 4.0f;
-        C.q4.v3.TEXID.id = 4.0f;
+
 
         //BOTTOM
         C.q5.v0.Position = { x - size, y - size, z + size };
@@ -173,10 +165,7 @@
         C.q5.v2.NV = { 0.0f, -1.0f, 0.0f };
         C.q5.v3.NV = { 0.0f, -1.0f, 0.0f };
 
-        C.q5.v0.TEXID.id = 5.0f;
-        C.q5.v1.TEXID.id = 5.0f;
-        C.q5.v2.TEXID.id = 5.0f;
-        C.q5.v3.TEXID.id = 5.0f;
+
 
         return C;
     };
@@ -194,3 +183,8 @@
         }
         return true;
     };
+
+    /*void SetQuadTexture(Cube& ref, const int& Quad, const AtlasData& Data)
+    {
+    
+    };*/
