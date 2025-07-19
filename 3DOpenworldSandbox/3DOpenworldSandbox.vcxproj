@@ -471,6 +471,8 @@
     <ClInclude Include="src\RendererClasses\VertexBuffer.h" />
     <ClInclude Include="src\RendererClasses\VertexBufferLayout.h" />
     <ClInclude Include="src\Shapes\Cube.h" />
+    <ClInclude Include="src\Shapes\CubeCCW.h" />
+    <ClInclude Include="src\Shapes\VertexStructs.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />

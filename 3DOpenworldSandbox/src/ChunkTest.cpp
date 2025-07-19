@@ -28,6 +28,7 @@
 #include "GameObjects/Light_Block.h"
 
 #include "Shapes/Cube.h"
+#include "Shapes/CubeCCW.h"
 #include "Texture.h"
 
 
@@ -107,32 +108,30 @@ int main(void)
         GLCall(glEnable(GL_DEPTH_TEST));
         GLCall(glDepthFunc(GL_LESS));
 
+        glEnable(GL_CULL_FACE);
+        //glCullFace(GL_BACK);
+       // glFrontFace(GL_CCW);
+
+
+
         VertexArray va;
 
 
         VertexBuffer vb(nullptr, sizeof(Cube) * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
 
 
-        /*int arr[5];
-        std::vector<int> v_arr;
-        v_arr.push_back(5);
-        v_arr.push_back(6);
-        v_arr.push_back(7);
-        v_arr.push_back(8);
-        v_arr.push_back(9);
-        v_arr.push_back(5);
-        v_arr.push_back(6);
-        v_arr.push_back(7);
-        v_arr.push_back(8);
-        v_arr.push_back(9);
 
-        std::cout << sizeof(arr) << std::endl;
-        std::cout << sizeof(v_arr) << std::endl;*/
         Cube CubeForChunk = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
-        Cube CubeForChunk2 = CreateCube(1.0f, 1.0f, 0.0f, 0.5f);
+        Cube CubeForChunk2 = CreateCube(0.0f, 0.0f, 1.0f, 0.5f);
+
+        SetQuadTextureData(CubeForChunk2, 0, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        SetQuadTextureData(CubeForChunk2, 1, { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f });
+        SetQuadTextureData(CubeForChunk2, 2, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        SetQuadTextureData(CubeForChunk2, 3, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        SetQuadTextureData(CubeForChunk2, 4, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        SetQuadTextureData(CubeForChunk2, 5, { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f });
 
 
-        //vb.SetBufferData(&CubeForChunk,0,sizeof(Cube));
         vb.SetBufferData(&CubeForChunk2, 0, sizeof(Cube));
         
         VertexBufferLayout vbl;
@@ -150,7 +149,7 @@ int main(void)
         va.AddBuffer(vb, vbl);
 
         
-        for (int face = 0; face < ChunkWidth * ChunkWidth * ChunkHeight * 6; face++)
+        /*for (int face = 0; face < ChunkWidth * ChunkWidth * ChunkHeight * 6; face++)
         {
             Indices[0 + face * 6] = 0 + face * 4;
             Indices[1 + face * 6] = 1 + face * 4;
@@ -158,6 +157,17 @@ int main(void)
             Indices[3 + face * 6] = 2 + face * 4;
             Indices[4 + face * 6] = 3 + face * 4;
             Indices[5 + face * 6] = 0 + face * 4;
+        }*/
+
+        //CCW
+        for (int face = 0; face < ChunkWidth * ChunkWidth * ChunkHeight * 6; face++)
+        {
+            Indices[0 + face * 6] = 0 + face * 4;
+            Indices[1 + face * 6] = 2 + face * 4;
+            Indices[2 + face * 6] = 1 + face * 4;
+            Indices[3 + face * 6] = 0 + face * 4;
+            Indices[4 + face * 6] = 3 + face * 4;
+            Indices[5 + face * 6] = 2 + face * 4;
         }
 
         IndexBuffer IB(Indices, ChunkWidth * ChunkWidth * ChunkHeight * 36);
@@ -168,14 +178,6 @@ int main(void)
 
 
         CubeShader.Bind();
-        std::array<std::string, 6> textureFiles = {
-            "res/textures/GrassBlockSide.png", //RIGHT
-            "res/textures/GrassBlockSide.png", //LEFT
-            "res/textures/GrassBlockTop.png",//TOP
-            "res/textures/GrassBlockBottom.png", //BOTTOM
-            "res/textures/GrassBlockSide.png", //FRONT
-            "res/textures/GrassBlockSide.png", //REAR
-        };
 
         Texture Tex1("res/textures/terrain.png");
         Tex1.Bind();

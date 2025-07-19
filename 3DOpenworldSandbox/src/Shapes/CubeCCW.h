@@ -1,16 +1,16 @@
 #pragma once
-#include <array>
 #include "VertexStructs.h"
 
-    struct Cube
+
+    struct CubeCCW
     {
         Quad Quads[6];
     };
 
-    static Cube CreateCube(float x, float y, float z, float size)
+    static CubeCCW CCWCreateCube(float x, float y, float z, float size)
     {
-        Cube C;
-  
+        CubeCCW C;
+
         //FRONT
         C.Quads[0].v0.Position = { x - size, y - size, z - size };
         C.Quads[0].v1.Position = { x + size, y - size, z - size };
@@ -82,7 +82,7 @@
         C.Quads[3].v1.TC = { 0.0f, 1.0f };
         C.Quads[3].v2.TC = { 1.0f, 1.0f };
         C.Quads[3].v3.TC = { 1.0f, 0.0f };
-        
+
         //C.Quads[3].v0.TC = { 0.0f, 0.0f };
         //C.Quads[3].v1.TC = { 1.0f, 0.0f };
         //C.Quads[3].v2.TC = { 1.0f, 1.0f };
@@ -93,7 +93,7 @@
         C.Quads[3].v2.NV = { 1.0f, 0.0f, 0.0f };
         C.Quads[3].v3.NV = { 1.0f, 0.0f, 0.0f };
 
- 
+
 
         //BACK
         C.Quads[4].v0.Position = { x - size, y - size, z + size };
@@ -129,12 +129,10 @@
         C.Quads[5].v2.NV = { 0.0f, -1.0f, 0.0f };
         C.Quads[5].v3.NV = { 0.0f, -1.0f, 0.0f };
 
-
-
         return C;
-    };
+    }
 
-    static bool PopulateCubeIndexBuffer(unsigned int(&arr)[36])
+    static bool CCWPopulateCubeIndexBuffer(unsigned int(&arr)[36])
     {
         //Creates an index buffer for a single cube
         for (int i = 0; i < 6; i++) {
@@ -148,7 +146,7 @@
         return true;
     };
 
-    static void SetQuadTextureData(Cube& ref, int desiredQuad, AtlasData Data)
+    static void CCWSetQuadTextureData(CubeCCW& ref, int desiredQuad, AtlasData Data)
     {
         ref.Quads[desiredQuad].v0.AtlasData = Data;
         ref.Quads[desiredQuad].v1.AtlasData = Data;
