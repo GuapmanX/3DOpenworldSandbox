@@ -1028,7 +1028,7 @@
     <ClInclude Include="src\Shapes\VertexStructs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Shapes\CubeCCW.h">
+    <ClInclude Include="src\Shapes\dynamicCube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

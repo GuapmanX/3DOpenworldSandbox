@@ -27,8 +27,8 @@
 #include "GameObjects/Block.h"
 #include "GameObjects/Light_Block.h"
 
-#include "Shapes/Cube.h"
-#include "Shapes/CubeCCW.h"
+//#include "Shapes/Cube.h"
+#include "Shapes/dynamicCube.h";
 #include "Texture.h"
 
 
@@ -109,30 +109,40 @@ int main(void)
         GLCall(glDepthFunc(GL_LESS));
 
         glEnable(GL_CULL_FACE);
-        //glCullFace(GL_BACK);
-       // glFrontFace(GL_CCW);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
 
 
 
         VertexArray va;
 
 
-        VertexBuffer vb(nullptr, sizeof(Cube) * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
+        VertexBuffer vb(nullptr, GetFullCubeSize() * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
+
+        const bool faces[6] = { true, false, true, true, true, true };
+        const bool faces2[6] = { true, true, true, true, true, false };
+
+        Cube<5> CubeForChunk = CreateCube<5>(0.0f, 0.0f, 0.0f, 0.5f, faces);
+        Cube<5> CubeForChunk2 = CreateCube<5>(0.0f, 1.0f, 0.0f, 0.5f, faces2);
+
+        CubeForChunk2.SetQuadTextureData(Faces::Front, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        CubeForChunk2.SetQuadTextureData(Faces::Top, { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f });
+        CubeForChunk2.SetQuadTextureData(Faces::Left, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        CubeForChunk2.SetQuadTextureData(Faces::Right, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        CubeForChunk2.SetQuadTextureData(Faces::Back, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        CubeForChunk2.SetQuadTextureData(Faces::Bottom, { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f });
+
+        CubeForChunk.SetQuadTextureData(Faces::Front, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        CubeForChunk.SetQuadTextureData(Faces::Top, { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f });
+        CubeForChunk.SetQuadTextureData(Faces::Left, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        CubeForChunk.SetQuadTextureData(Faces::Right, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        CubeForChunk.SetQuadTextureData(Faces::Back, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
+        CubeForChunk.SetQuadTextureData(Faces::Bottom, { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f });
 
 
-
-        Cube CubeForChunk = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
-        Cube CubeForChunk2 = CreateCube(0.0f, 0.0f, 1.0f, 0.5f);
-
-        SetQuadTextureData(CubeForChunk2, 0, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        SetQuadTextureData(CubeForChunk2, 1, { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f });
-        SetQuadTextureData(CubeForChunk2, 2, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        SetQuadTextureData(CubeForChunk2, 3, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        SetQuadTextureData(CubeForChunk2, 4, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        SetQuadTextureData(CubeForChunk2, 5, { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f });
-
-
-        vb.SetBufferData(&CubeForChunk2, 0, sizeof(Cube));
+        vb.SetBufferData(CubeForChunk2.Quads, 0, CubeForChunk2.GetBufferSize());
+        vb.SetBufferData(CubeForChunk.Quads, CubeForChunk2.GetBufferSize(), CubeForChunk.GetBufferSize());
+        //vb.SetBufferData(CubeForChunk2.Quads, sizeof(Cube<6>) * 2, sizeof(Cube<6>));
         
         VertexBufferLayout vbl;
         vbl.Push<float>(3);
@@ -149,7 +159,7 @@ int main(void)
         va.AddBuffer(vb, vbl);
 
         
-        /*for (int face = 0; face < ChunkWidth * ChunkWidth * ChunkHeight * 6; face++)
+        for (int face = 0; face < ChunkWidth * ChunkWidth * ChunkHeight * 6; face++)
         {
             Indices[0 + face * 6] = 0 + face * 4;
             Indices[1 + face * 6] = 1 + face * 4;
@@ -157,17 +167,6 @@ int main(void)
             Indices[3 + face * 6] = 2 + face * 4;
             Indices[4 + face * 6] = 3 + face * 4;
             Indices[5 + face * 6] = 0 + face * 4;
-        }*/
-
-        //CCW
-        for (int face = 0; face < ChunkWidth * ChunkWidth * ChunkHeight * 6; face++)
-        {
-            Indices[0 + face * 6] = 0 + face * 4;
-            Indices[1 + face * 6] = 2 + face * 4;
-            Indices[2 + face * 6] = 1 + face * 4;
-            Indices[3 + face * 6] = 0 + face * 4;
-            Indices[4 + face * 6] = 3 + face * 4;
-            Indices[5 + face * 6] = 2 + face * 4;
         }
 
         IndexBuffer IB(Indices, ChunkWidth * ChunkWidth * ChunkHeight * 36);
@@ -276,6 +275,7 @@ int main(void)
         }
     }
     delete[] Indices;
+    Indices = nullptr;
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
