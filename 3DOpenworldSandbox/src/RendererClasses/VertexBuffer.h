@@ -11,7 +11,7 @@ private:
 public:
 	VertexBuffer(const void* data, unsigned int size, unsigned int usage = 35044); //GL_STATIC_DRAW
 	VertexBuffer() = default;
-	//VertexBuffer(VertexBuffer&& other) noexcept;
+	VertexBuffer(VertexBuffer&& other) noexcept;
 	~VertexBuffer();
 
 	VertexBuffer& operator=(VertexBuffer&& other) noexcept;

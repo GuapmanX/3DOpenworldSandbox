@@ -39,6 +39,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
 	this->m_BPP = other.m_BPP;
 	other.m_RendererID = 0;
 	other.Moved = true;
+	this->Initialized = true;
 
 	return *this;
 }
@@ -51,17 +52,18 @@ Texture::Texture(Texture&& other) noexcept
 	this->m_BPP = other.m_BPP;
 	other.m_RendererID = 0;
 	other.Moved = true;
+	this->Initialized = true;
 }
 
 Texture::~Texture()
 {
-	if (Initialized)
+	if (Initialized && !Moved)
 		GLCall(glDeleteTextures(1, &m_RendererID));
 }
 
 void Texture::Bind(unsigned int slot) const
 {
-	if (Initialized) {
+	if (Initialized && !Moved) {
 		GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 	}

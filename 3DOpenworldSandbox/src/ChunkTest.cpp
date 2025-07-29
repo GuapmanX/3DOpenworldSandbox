@@ -30,6 +30,7 @@
 //#include "Shapes/Cube.h"
 #include "Shapes/dynamicCube.h";
 #include "Texture.h"
+#include"GameObjects/Chunk.h"
 
 
 
@@ -96,7 +97,7 @@ int main(void)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
 
-
+        
         const int ChunkWidth = 16;
         const int ChunkHeight = 32;
         unsigned int* Indices = new unsigned int[ChunkWidth * ChunkWidth * ChunkHeight * 36];
@@ -112,9 +113,10 @@ int main(void)
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
 
+        Initialize();
 
 
-        VertexArray va;
+        /*VertexArray va;
 
 
         VertexBuffer vb(nullptr, GetFullCubeSize() * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
@@ -140,9 +142,12 @@ int main(void)
         CubeForChunk.SetQuadTextureData(Faces::Bottom, { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f });
 
 
-        vb.SetBufferData(CubeForChunk2.Quads, 0, CubeForChunk2.GetBufferSize());
-        vb.SetBufferData(CubeForChunk.Quads, CubeForChunk2.GetBufferSize(), CubeForChunk.GetBufferSize());
-        //vb.SetBufferData(CubeForChunk2.Quads, sizeof(Cube<6>) * 2, sizeof(Cube<6>));
+        //vb.SetBufferData(CubeForChunk2.Quads, 0, CubeForChunk2.GetBufferSize());
+       // vb.SetBufferData(CubeForChunk.Quads, CubeForChunk2.GetBufferSize(), CubeForChunk.GetBufferSize());
+
+       vb.SetBufferData(CubeForChunk2.Quads, 0, CubeForChunk2.GetBufferSize());
+       vb.SetBufferData(CubeForChunk.Quads, GetFullCubeSize(), CubeForChunk.GetBufferSize());
+
         
         VertexBufferLayout vbl;
         vbl.Push<float>(3);
@@ -178,7 +183,9 @@ int main(void)
 
         CubeShader.Bind();
 
-        Texture Tex1("res/textures/terrain.png");
+        Texture Tex1;//("res/textures/terrain.png");
+        Tex1 = Texture("res/textures/terrain.png");
+
         Tex1.Bind();
         CubeShader.SetUniform1i("u_Texture", 0);
 
@@ -187,7 +194,12 @@ int main(void)
         va.Unbind();
         CubeShader.Unbind();
         vb.Unbind();
-        IB.Unbind();
+        IB.Unbind();*/
+
+        Chunk Chuck;
+        Chuck.SetBlock(0, 0, 0);
+        Chuck.SetBlock(0, 1, 0);
+        Chuck.SetBlock(1, 1, 0);
 
         Renderer renderer;
 
@@ -246,13 +258,15 @@ int main(void)
 
 
             //m_Shader->SetUniformMat4f("u_MVP", mvp);
-            CubeShader.Bind();
+
+            /*CubeShader.Bind();
             CubeShader.SetUniformMat4f("Model", Model);
             CubeShader.SetUniformMat4f("View", View);
             CubeShader.SetUniformMat4f("Projection", Projection);
             CubeShader.Unbind();
 
-            renderer.Draw(va, IB, CubeShader);
+            renderer.Draw(va, IB, CubeShader);*/
+            Chuck.Render();
 
 
 

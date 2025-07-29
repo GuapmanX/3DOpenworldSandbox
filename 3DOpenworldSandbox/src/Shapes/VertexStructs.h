@@ -7,11 +7,6 @@ struct AtlasData
     float TexturePosX, TexturePosY;
 };
 
-struct TextureID
-{
-    int id;
-};
-
 struct Vector3
 {
     float x, y, z;

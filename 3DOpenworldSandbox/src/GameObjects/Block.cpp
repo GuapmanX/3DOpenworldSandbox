@@ -101,8 +101,6 @@ void Block::ChangeTexture(const std::array<std::string, 6>& FACES)
     SHADER.Unbind();
 }
 
-#include <iostream>
-
 void Block::ApplyLighting(const glm::vec4& SourceColor, glm::vec3& SourcePosition)
 {
     Shader& SHADER = m_RenderBlock.GetShader();

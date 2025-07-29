@@ -1,43 +1,50 @@
 #pragma once
 
-#include "Block_c.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
-#include "Shapes/Cube.h";
+#include "Texture.h"
+//#include "Shapes/Cube.h"
+#include "Shapes/dynamicCube.h"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include <string>
 
 
 const int ChunkWidth = 16;
 const int ChunkHeight = 32;
 
-struct ChunkData
+
+void Initialize();
+
+struct BlockData
 {
-	ChunkBlock m_ChunkData[ChunkWidth][ChunkWidth][ChunkHeight];
+	std::string Type = "None";
+	bool Full = false;
 
-	VertexArray m_VA;
-	VertexBufferLayout m_VBL;
-	//A way to access the gpu data
-	VertexBuffer m_GpuChunkData = VertexBuffer(nullptr, sizeof(Cube) * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
-
-	//Populates the chunk with data
-	void CompileChunk()
-	{
-		m_VBL.Push<float>(3);
-		m_VA.AddBuffer(m_GpuChunkData,m_VBL);
-
+	const bool isEmpty() {
+		return !Full;
 	}
-	
 
-
-
+	void setOccupation(const bool& occupied) {
+		Full = occupied;
+	}
 };
+
 
 class Chunk
 {
-private:
-	ChunkData Data;
 public:
-	Chunk() {};
-	~Chunk() {};
+	BlockData m_BlockMatrix[ChunkWidth][ChunkWidth][ChunkHeight]; // XZY
+	VertexBuffer Positions = VertexBuffer(nullptr, GetFullCubeSize() * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
+	VertexArray va;
 
+	void SetBlock(int x, int y, int z);
+	void Render();
+	Chunk();
+private:
+	bool CheckForBlock(int x, int y, int z);
+	void CheckNearbyBlocks(bool (&values)[6],int x, int y, int z);
+	void SetBlockBufferData(int x, int y, int z);
 };
