@@ -1,6 +1,8 @@
 #include "Chunk.h"
 #include "GameCore/Camera.h"
+#include <iostream>
 
+const int bytesPerCube = GetFullCubeSize();
 unsigned int* Indices = new unsigned int[ChunkWidth * ChunkWidth * ChunkHeight * 36];
 VertexBufferLayout C_VBL;
 IndexBuffer C_IB;
@@ -63,49 +65,92 @@ Chunk::Chunk()
 	C_shader.Unbind();
 }
 
+
 bool Chunk::CheckForBlock(int x, int y, int z)
 {
 	//Checks if its outside the chunk borders
-	if (x < 0 || x > ChunkWidth) { return false; }
-	if (y < 0 || y > ChunkHeight) { return false; }
-	if (z < 0 || z > ChunkWidth) { return false; }
+	if (x < 0 || x > ChunkWidth) { return true; }
+	if (y < 0 || y > ChunkHeight) { return true; }
+	if (z < 0 || z > ChunkWidth) { return true; }
 	//////////////////////////////////////////
 
 
 	return m_BlockMatrix[x][z][y].isEmpty(); //Checks if theres a block in the specific space
 }
 
-void Chunk::CheckNearbyBlocks(bool (&values)[6], int x, int y, int z)
+void Chunk::CheckNearbyBlocks(bool (&values)[6],int& faces, int x, int y, int z)
 {
-	/*bool up = CheckForBlock(x, y + 1, z);
-	bool down = CheckForBlock(x, y - 1, z);
-	bool right = CheckForBlock(x + 1, y, z);
-	bool left = CheckForBlock(x - 1, y, z);
-	bool front = CheckForBlock(x, y, z - 1);
-	bool back = CheckForBlock(x, y, z + 1);*/
+	bool IsTop = CheckForBlock(x, y + 1, z);
+	faces += IsTop;
+	values[Faces::Top] = IsTop;
 
+	bool IsBottom = CheckForBlock(x, y - 1, z);
+	faces += IsBottom;
+	values[Faces::Bottom] = IsBottom;
 
-	//kind of works but face direction is completely fucked
-	values[Faces::Top] = CheckForBlock(x, y + 1, z);
-	values[Faces::Bottom] = CheckForBlock(x, y - 1, z);
-	values[Faces::Right] = CheckForBlock(x + 1, y, z);
-	values[Faces::Left] = CheckForBlock(x - 1, y, z);
-	values[Faces::Front] = CheckForBlock(x, y, z - 1);
-	values[Faces::Back] = CheckForBlock(x, y, z + 1);
+	bool IsRight = CheckForBlock(x + 1, y, z);
+	faces += IsRight;
+	values[Faces::Right] = IsRight;
 
+	bool IsLeft = CheckForBlock(x - 1, y, z);
+	faces += IsLeft;
+	values[Faces::Left] = IsLeft;
+
+	bool IsFront = CheckForBlock(x, y, z + 1);
+	faces += IsFront;
+	values[Faces::Front] = IsFront;
+
+	bool IsBack = CheckForBlock(x, y, z - 1);
+	faces += IsBack;
+	values[Faces::Back] = IsBack;
 }
 
-void Chunk::SetBlockBufferData(int x, int y, int z)
+void Chunk::ClearBufferPosition(int x, int y, int z)
 {
-	int bytesPerCube = GetFullCubeSize();
 	int linearIndex = x + ChunkWidth * (y + ChunkHeight * z);
 	int bufferOffset = linearIndex * bytesPerCube;
 
-	bool faces[6] = {true};// = { true, true, true, true, true, true };
+	Positions.SetBufferData(0, bufferOffset, bytesPerCube);
+}
 
-	CheckNearbyBlocks(faces, x, y, z);
+void Chunk::RedrawBlock(int x, int y, int z)
+{
+	//Checks if its outside the chunk borders
+	if (x < 0 || x > ChunkWidth) { return; }
+	if (y < 0 || y > ChunkHeight) { return; }
+	if (z < 0 || z > ChunkWidth) { return; }
+	//////////////////////////////////////////
 
-	//Cube<6> CubeForChunk = CreateCube<6>(0.0f, 0.0f, 0.0f, 0.5f, faces);
+	if (m_BlockMatrix[x][z][y].isEmpty()) { return; }
+
+	ClearBufferPosition(x, y, z);
+	SetBlockBufferData(x, y, z, false);
+}
+
+void Chunk::RedrawNearbyBlocks(int x, int y, int z)
+{
+	RedrawBlock(x, y + 1, z);
+	RedrawBlock(x, y - 1, z);
+	RedrawBlock(x + 1, y, z);
+	RedrawBlock(x - 1, y, z);
+	RedrawBlock(x, y, z + 1);
+	RedrawBlock(x, y, z - 1);
+}
+
+void Chunk::SetBlockBufferData(int x, int y, int z, bool redrawNearbyBlocks)
+{
+	int linearIndex = x + ChunkWidth * (y + ChunkHeight * z);
+	int bufferOffset = linearIndex * bytesPerCube;
+
+	bool faces[6] = {true};
+	int faceAmount = 0;
+
+	CheckNearbyBlocks(faces, faceAmount, x, y, z);
+	std::cout << faceAmount << std::endl;
+
+	if (redrawNearbyBlocks) 
+		RedrawNearbyBlocks(x, y, z);
+
 	Cube<6> CubeForChunk = CreateCube<6>((float)x, (float)y, (float)z, 0.5f, faces);
 
 	CubeForChunk.SetQuadTextureData(Faces::Front, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
@@ -121,7 +166,7 @@ void Chunk::SetBlockBufferData(int x, int y, int z)
 void Chunk::SetBlock(int x, int y, int z)
 {
 	m_BlockMatrix[x][z][y].setOccupation(true);
-	SetBlockBufferData(x, y, z);
+	SetBlockBufferData(x, y, z, true);
 }
 
 void Chunk::Render() {

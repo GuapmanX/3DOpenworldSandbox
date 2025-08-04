@@ -1,7 +1,6 @@
 #include "VertexBuffer.h"
 
 #include "Renderer.h"
-#include <iostream>
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size, unsigned int usage)//GLenum
 {
@@ -24,7 +23,6 @@ VertexBuffer::~VertexBuffer()
 {
     if (Initialized && !Moved)
     {
-        std::cout << "deleted" << std::endl;
         GLCall(glDeleteBuffers(1, &m_RendererID));
     }
 }

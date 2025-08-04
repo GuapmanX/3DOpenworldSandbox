@@ -20,15 +20,15 @@ void Initialize();
 
 struct BlockData
 {
-	std::string Type = "None";
-	bool Full = false;
+	int type = 0;
+	bool full = false;
 
 	const bool isEmpty() {
-		return !Full;
+		return !full;
 	}
 
 	void setOccupation(const bool& occupied) {
-		Full = occupied;
+		full = occupied;
 	}
 };
 
@@ -45,6 +45,9 @@ public:
 	Chunk();
 private:
 	bool CheckForBlock(int x, int y, int z);
-	void CheckNearbyBlocks(bool (&values)[6],int x, int y, int z);
-	void SetBlockBufferData(int x, int y, int z);
+	void CheckNearbyBlocks(bool (&values)[6], int& faces,int x, int y, int z);
+	void SetBlockBufferData(int x, int y, int z, bool RedrawNearbyBlocks);
+	void RedrawBlock(int x, int y, int z);
+	void ClearBufferPosition(int x, int y, int z);
+	void RedrawNearbyBlocks(int x, int y, int z);
 };
