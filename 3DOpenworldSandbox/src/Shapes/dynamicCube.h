@@ -56,6 +56,8 @@ static int HowManySides(const bool arr[6])
     return faces;
 }
 
+#include <iostream>
+
 template<int FaceAmount>
 static Cube<FaceAmount> CreateCube(float x, float y, float z, float size,const bool render[6])
 {
@@ -177,6 +179,7 @@ static Cube<FaceAmount> CreateCube(float x, float y, float z, float size,const b
 
 
     //BOTTOM
+    std::cout << "Bottom: " << render[Faces::Bottom] << "Enough storage: " << (iterator < FaceAmount) << std::endl;
     if (render[Faces::Bottom] && (iterator < FaceAmount)) {
         C.Quads[iterator].v0.Position = { x - size, y - size, z - size };
         C.Quads[iterator].v1.Position = { x + size, y - size, z - size };
@@ -195,6 +198,10 @@ static Cube<FaceAmount> CreateCube(float x, float y, float z, float size,const b
 
         C.Face[iterator] = Faces::Bottom;
     }
+    /*else {
+        std::cout << render[Faces::Bottom] << std::endl;
+        std::cout << (iterator < FaceAmount) << std::endl;
+    }*/
 
 
     return C;

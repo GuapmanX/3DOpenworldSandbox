@@ -197,15 +197,14 @@ int main(void)
         IB.Unbind();*/
 
         Chunk Chuck;
-        Chuck.SetBlock(0, 0, 0);
         Chuck.SetBlock(0, 1, 0);
+        Chuck.SetBlock(0, 0, 0);
         Chuck.SetBlock(1, 1, 0);
         Chuck.SetBlock(1, 0, 0);
         Chuck.SetBlock(0, 1, 1);
         Chuck.SetBlock(1, 1, 1);
         Chuck.SetBlock(1, 0, 1);
         Chuck.SetBlock(0, 0, 1);
-
         Renderer renderer;
 
 

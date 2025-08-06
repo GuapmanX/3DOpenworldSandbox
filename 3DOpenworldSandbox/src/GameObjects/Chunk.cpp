@@ -1,8 +1,8 @@
 #include "Chunk.h"
 #include "GameCore/Camera.h"
 #include <iostream>
+#include <vector>
 
-const int bytesPerCube = GetFullCubeSize();
 unsigned int* Indices = new unsigned int[ChunkWidth * ChunkWidth * ChunkHeight * 36];
 VertexBufferLayout C_VBL;
 IndexBuffer C_IB;
@@ -78,48 +78,41 @@ bool Chunk::CheckForBlock(int x, int y, int z)
 	return m_BlockMatrix[x][z][y].isEmpty(); //Checks if theres a block in the specific space
 }
 
-void Chunk::CheckNearbyBlocks(bool (&values)[6],int& faces, int x, int y, int z)
+void Chunk::CheckNearbyBlocks(bool (&values)[6],int& faceCount, int x, int y, int z)
 {
 	bool IsTop = CheckForBlock(x, y + 1, z);
-	faces += IsTop;
+	faceCount += IsTop;
 	values[Faces::Top] = IsTop;
 
 	bool IsBottom = CheckForBlock(x, y - 1, z);
-	faces += IsBottom;
+	faceCount += IsBottom;
 	values[Faces::Bottom] = IsBottom;
 
 	bool IsRight = CheckForBlock(x + 1, y, z);
-	faces += IsRight;
+	faceCount += IsRight;
 	values[Faces::Right] = IsRight;
 
 	bool IsLeft = CheckForBlock(x - 1, y, z);
-	faces += IsLeft;
+	faceCount += IsLeft;
 	values[Faces::Left] = IsLeft;
 
 	bool IsFront = CheckForBlock(x, y, z + 1);
-	faces += IsFront;
+	faceCount += IsFront;
 	values[Faces::Front] = IsFront;
 
 	bool IsBack = CheckForBlock(x, y, z - 1);
-	faces += IsBack;
+	faceCount += IsBack;
 	values[Faces::Back] = IsBack;
-}
-
-void Chunk::ClearBufferPosition(int x, int y, int z)
-{
-	int linearIndex = x + ChunkWidth * (y + ChunkHeight * z);
-	int bufferOffset = linearIndex * bytesPerCube;
-
-	Positions.SetBufferData(0, bufferOffset, bytesPerCube);
 }
 
 void Chunk::RedrawBlock(int x, int y, int z)
 {
+
 	//Checks if its outside the chunk borders
 	if (x < 0 || x > ChunkWidth) { return; }
 	if (y < 0 || y > ChunkHeight) { return; }
 	if (z < 0 || z > ChunkWidth) { return; }
-	//////////////////////////////////////////
+	////////////////////////////////////////
 
 	if (m_BlockMatrix[x][z][y].isEmpty()) { return; }
 
@@ -137,30 +130,197 @@ void Chunk::RedrawNearbyBlocks(int x, int y, int z)
 	RedrawBlock(x, y, z - 1);
 }
 
+std::vector<Quad> Chunk::GenerateCube(float x, float y, float z, const bool render[6], const int faces)
+{
+	std::vector<Quad> Data;
+	Data.reserve(faces);
+
+	const float size = 0.5f;
+
+	if (render[Faces::Front]) {
+		Quad FrontFace;
+
+		FrontFace.v0.Position = { x - size, y - size, z + size };
+		FrontFace.v1.Position = { x + size, y - size, z + size };
+		FrontFace.v2.Position = { x + size, y + size, z + size };
+		FrontFace.v3.Position = { x - size, y + size, z + size };
+
+		FrontFace.v0.TC = { 0.0f, 0.0f };
+		FrontFace.v1.TC = { 1.0f, 0.0f };
+		FrontFace.v2.TC = { 1.0f, 1.0f };
+		FrontFace.v3.TC = { 0.0f, 1.0f };
+
+		FrontFace.v0.NV = { 0.0f, 0.0f, -1.0f };
+		FrontFace.v1.NV = { 0.0f, 0.0f, -1.0f };
+		FrontFace.v2.NV = { 0.0f, 0.0f, -1.0f };
+		FrontFace.v3.NV = { 0.0f, 0.0f, -1.0f };
+
+		FrontFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		FrontFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		FrontFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		FrontFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+
+		Data.push_back(FrontFace);
+	}
+
+	if (render[Faces::Top]) {
+		Quad TopFace;
+
+		TopFace.v0.Position = { x - size, y + size, z + size };
+		TopFace.v1.Position = { x + size, y + size, z + size };
+		TopFace.v2.Position = { x + size, y + size, z - size };
+		TopFace.v3.Position = { x - size, y + size, z - size };
+
+		TopFace.v0.TC = { 0.0f, 0.0f };
+		TopFace.v1.TC = { 1.0f, 0.0f };
+		TopFace.v2.TC = { 1.0f, 1.0f };
+		TopFace.v3.TC = { 0.0f, 1.0f };
+
+		TopFace.v0.NV = { 0.0f, 1.0f, 0.0f };
+		TopFace.v1.NV = { 0.0f, 1.0f, 0.0f };
+		TopFace.v2.NV = { 0.0f, 1.0f, 0.0f };
+		TopFace.v3.NV = { 0.0f, 1.0f, 0.0f };
+
+		TopFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f };
+		TopFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f };
+		TopFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f };
+		TopFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f };
+
+		Data.push_back(TopFace);
+	}
+
+	if (render[Faces::Left]) {
+		Quad LeftFace;
+
+		LeftFace.v0.Position = { x - size, y - size, z - size };
+		LeftFace.v1.Position = { x - size, y - size, z + size };
+		LeftFace.v2.Position = { x - size, y + size, z + size };
+		LeftFace.v3.Position = { x - size, y + size, z - size };
+
+		LeftFace.v0.TC = { 0.0f, 0.0f };
+		LeftFace.v1.TC = { 1.0f, 0.0f };
+		LeftFace.v2.TC = { 1.0f, 1.0f };
+		LeftFace.v3.TC = { 0.0f, 1.0f };
+
+		LeftFace.v0.NV = { -1.0f, 0.0f, 0.0f };
+		LeftFace.v1.NV = { -1.0f, 0.0f, 0.0f };
+		LeftFace.v2.NV = { -1.0f, 0.0f, 0.0f };
+		LeftFace.v3.NV = { -1.0f, 0.0f, 0.0f };
+
+		LeftFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		LeftFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		LeftFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		LeftFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+
+		Data.push_back(LeftFace);
+	}
+
+	if (render[Faces::Right]) {
+		Quad RightFace;
+
+		RightFace.v0.Position = { x + size, y - size, z + size };
+		RightFace.v1.Position = { x + size, y - size, z - size };
+		RightFace.v2.Position = { x + size, y + size, z - size };
+		RightFace.v3.Position = { x + size, y + size, z + size };
+
+		RightFace.v0.TC = { 0.0f, 0.0f };
+		RightFace.v1.TC = { 1.0f, 0.0f };
+		RightFace.v2.TC = { 1.0f, 1.0f };
+		RightFace.v3.TC = { 0.0f, 1.0f };
+
+		RightFace.v0.NV = { 1.0f, 0.0f, 0.0f };
+		RightFace.v1.NV = { 1.0f, 0.0f, 0.0f };
+		RightFace.v2.NV = { 1.0f, 0.0f, 0.0f };
+		RightFace.v3.NV = { 1.0f, 0.0f, 0.0f };
+
+		RightFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		RightFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		RightFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		RightFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+
+		Data.push_back(RightFace);
+	}
+
+	if (render[Faces::Back]) {
+		Quad BackFace;
+
+		BackFace.v0.Position = { x + size, y - size, z - size };
+		BackFace.v1.Position = { x - size, y - size, z - size };
+		BackFace.v2.Position = { x - size, y + size, z - size };
+		BackFace.v3.Position = { x + size, y + size, z - size };
+
+		BackFace.v0.TC = { 0.0f, 0.0f };
+		BackFace.v1.TC = { 1.0f, 0.0f };
+		BackFace.v2.TC = { 1.0f, 1.0f };
+		BackFace.v3.TC = { 0.0f, 1.0f };
+
+		BackFace.v0.NV = { 0.0f, 0.0f, 1.0f };
+		BackFace.v1.NV = { 0.0f, 0.0f, 1.0f };
+		BackFace.v2.NV = { 0.0f, 0.0f, 1.0f };
+		BackFace.v3.NV = { 0.0f, 0.0f, 1.0f };
+
+		BackFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		BackFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		BackFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		BackFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+
+		Data.push_back(BackFace);
+	}
+
+	if (render[Faces::Bottom]) {
+		Quad BottomFace;
+
+		BottomFace.v0.Position = { x - size, y - size, z - size };
+		BottomFace.v1.Position = { x + size, y - size, z - size };
+		BottomFace.v2.Position = { x + size, y - size, z + size };
+		BottomFace.v3.Position = { x - size, y - size, z + size };
+
+		BottomFace.v0.TC = { 0.0f, 0.0f };
+		BottomFace.v1.TC = { 1.0f, 0.0f };
+		BottomFace.v2.TC = { 1.0f, 1.0f };
+		BottomFace.v3.TC = { 0.0f, 1.0f };
+
+		BottomFace.v0.NV = { 0.0f, -1.0f, 0.0f };
+		BottomFace.v1.NV = { 0.0f, -1.0f, 0.0f };
+		BottomFace.v2.NV = { 0.0f, -1.0f, 0.0f };
+		BottomFace.v3.NV = { 0.0f, -1.0f, 0.0f };
+
+		BottomFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f };
+		BottomFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f };
+		BottomFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f };
+		BottomFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f };
+
+		Data.push_back(BottomFace);
+	}
+
+	return Data;
+}
+
+void Chunk::ClearBufferPosition(int x, int y, int z)
+{
+	int linearIndex = x + ChunkWidth * (y + ChunkHeight * z);
+	int bufferOffset = linearIndex * bytesPerCube;
+
+	std::vector<GLubyte> zeros(bytesPerCube, 0);
+	Positions.SetBufferData(zeros.data(), bufferOffset, bytesPerCube);
+}
+
 void Chunk::SetBlockBufferData(int x, int y, int z, bool redrawNearbyBlocks)
 {
 	int linearIndex = x + ChunkWidth * (y + ChunkHeight * z);
 	int bufferOffset = linearIndex * bytesPerCube;
 
-	bool faces[6] = {true};
+	bool faces[6] = {false};
 	int faceAmount = 0;
 
 	CheckNearbyBlocks(faces, faceAmount, x, y, z);
-	std::cout << faceAmount << std::endl;
 
 	if (redrawNearbyBlocks) 
 		RedrawNearbyBlocks(x, y, z);
 
-	Cube<6> CubeForChunk = CreateCube<6>((float)x, (float)y, (float)z, 0.5f, faces);
+	std::vector<Quad> PartialCube = GenerateCube((float)x, (float)y, (float)z, faces, faceAmount);
 
-	CubeForChunk.SetQuadTextureData(Faces::Front, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-	CubeForChunk.SetQuadTextureData(Faces::Top, { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f });
-	CubeForChunk.SetQuadTextureData(Faces::Left, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-	CubeForChunk.SetQuadTextureData(Faces::Right, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-	CubeForChunk.SetQuadTextureData(Faces::Back, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-	CubeForChunk.SetQuadTextureData(Faces::Bottom, { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f });
-
-	Positions.SetBufferData(&CubeForChunk.Quads, bufferOffset, CubeForChunk.GetBufferSize());
+	Positions.SetBufferData(PartialCube.data(), bufferOffset, sizeof(Quad) * faceAmount);
 }
 
 void Chunk::SetBlock(int x, int y, int z)

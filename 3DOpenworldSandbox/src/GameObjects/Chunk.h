@@ -14,6 +14,7 @@
 
 const int ChunkWidth = 16;
 const int ChunkHeight = 32;
+const int bytesPerCube = sizeof(Quad) * 6;
 
 
 void Initialize();
@@ -37,7 +38,7 @@ class Chunk
 {
 public:
 	BlockData m_BlockMatrix[ChunkWidth][ChunkWidth][ChunkHeight]; // XZY
-	VertexBuffer Positions = VertexBuffer(nullptr, GetFullCubeSize() * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
+	VertexBuffer Positions = VertexBuffer(nullptr, bytesPerCube * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
 	VertexArray va;
 
 	void SetBlock(int x, int y, int z);
@@ -45,9 +46,10 @@ public:
 	Chunk();
 private:
 	bool CheckForBlock(int x, int y, int z);
-	void CheckNearbyBlocks(bool (&values)[6], int& faces,int x, int y, int z);
+	void CheckNearbyBlocks(bool (&values)[6], int& faceCount,int x, int y, int z);
 	void SetBlockBufferData(int x, int y, int z, bool RedrawNearbyBlocks);
 	void RedrawBlock(int x, int y, int z);
 	void ClearBufferPosition(int x, int y, int z);
 	void RedrawNearbyBlocks(int x, int y, int z);
+	std::vector<Quad> GenerateCube(float x, float y, float z, const bool render[6], const int faces);
 };
