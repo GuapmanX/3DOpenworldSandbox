@@ -54,7 +54,7 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer& other) noexcept
 void VertexBuffer::SetBufferData(const void* buffer, unsigned int Offset, unsigned int BufferSize) const
 {
     Bind();
-    GLCall(glBufferSubData(GL_ARRAY_BUFFER, Offset, BufferSize, buffer));
+         GLCall(glBufferSubData(GL_ARRAY_BUFFER, Offset, BufferSize, buffer));
     Unbind();
 }
 

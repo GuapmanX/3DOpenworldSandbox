@@ -31,7 +31,7 @@
 #include "Shapes/dynamicCube.h";
 #include "Texture.h"
 #include"GameObjects/Chunk.h"
-
+#include "MIPMAP.h"
 
 
 
@@ -115,96 +115,41 @@ int main(void)
 
         Initialize();
 
+        /*std::vector<std::string> TEXDATA;
+        TEXDATA.reserve(4);
+        TEXDATA.push_back("Terrain.png");
+        TEXDATA.push_back("Terrain_1.png");
+        TEXDATA.push_back("Terrain_2.png");
+        TEXDATA.push_back("Terrain_3.png");
 
-        /*VertexArray va;
-
-
-        VertexBuffer vb(nullptr, GetFullCubeSize() * ChunkWidth * ChunkWidth * ChunkHeight, GL_DYNAMIC_DRAW);
-
-        const bool faces[6] = { true, false, true, true, true, true };
-        const bool faces2[6] = { true, true, true, true, true, false };
-
-        Cube<5> CubeForChunk = CreateCube<5>(0.0f, 0.0f, 0.0f, 0.5f, faces);
-        Cube<5> CubeForChunk2 = CreateCube<5>(0.0f, 1.0f, 0.0f, 0.5f, faces2);
-
-        CubeForChunk2.SetQuadTextureData(Faces::Front, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        CubeForChunk2.SetQuadTextureData(Faces::Top, { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f });
-        CubeForChunk2.SetQuadTextureData(Faces::Left, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        CubeForChunk2.SetQuadTextureData(Faces::Right, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        CubeForChunk2.SetQuadTextureData(Faces::Back, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        CubeForChunk2.SetQuadTextureData(Faces::Bottom, { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f });
-
-        CubeForChunk.SetQuadTextureData(Faces::Front, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        CubeForChunk.SetQuadTextureData(Faces::Top, { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f });
-        CubeForChunk.SetQuadTextureData(Faces::Left, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        CubeForChunk.SetQuadTextureData(Faces::Right, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        CubeForChunk.SetQuadTextureData(Faces::Back, { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f });
-        CubeForChunk.SetQuadTextureData(Faces::Bottom, { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f });
-
-
-        //vb.SetBufferData(CubeForChunk2.Quads, 0, CubeForChunk2.GetBufferSize());
-       // vb.SetBufferData(CubeForChunk.Quads, CubeForChunk2.GetBufferSize(), CubeForChunk.GetBufferSize());
-
-       vb.SetBufferData(CubeForChunk2.Quads, 0, CubeForChunk2.GetBufferSize());
-       vb.SetBufferData(CubeForChunk.Quads, GetFullCubeSize(), CubeForChunk.GetBufferSize());
-
-        
-        VertexBufferLayout vbl;
-        vbl.Push<float>(3);
-        vbl.Push<float>(3);
-        vbl.Push<float>(2);
-        vbl.Push<float>(3);
-
-        //atlas data
-        vbl.Push<float>(2); //atlas size
-        vbl.Push<float>(2); //single texture size
-        vbl.Push<float>(2); //texture position
-        ////////
-
-        va.AddBuffer(vb, vbl);
-
-        
-        for (int face = 0; face < ChunkWidth * ChunkWidth * ChunkHeight * 6; face++)
-        {
-            Indices[0 + face * 6] = 0 + face * 4;
-            Indices[1 + face * 6] = 1 + face * 4;
-            Indices[2 + face * 6] = 2 + face * 4;
-            Indices[3 + face * 6] = 2 + face * 4;
-            Indices[4 + face * 6] = 3 + face * 4;
-            Indices[5 + face * 6] = 0 + face * 4;
-        }
-
-        IndexBuffer IB(Indices, ChunkWidth * ChunkWidth * ChunkHeight * 36);
-
-        Shader CubeShader("res/shaders/3DObjectATLASEARTH.shader");
-
-
-
-
-        CubeShader.Bind();
-
-        Texture Tex1;//("res/textures/terrain.png");
-        Tex1 = Texture("res/textures/terrain.png");
-
-        Tex1.Bind();
-        CubeShader.SetUniform1i("u_Texture", 0);
-
-
-
-        va.Unbind();
-        CubeShader.Unbind();
-        vb.Unbind();
-        IB.Unbind();*/
+        MIPMAP mpmp(TEXDATA);*/
 
         Chunk Chuck;
-        Chuck.SetBlock(0, 1, 0);
-        Chuck.SetBlock(0, 0, 0);
-        Chuck.SetBlock(1, 1, 0);
-        Chuck.SetBlock(1, 0, 0);
-        Chuck.SetBlock(0, 1, 1);
-        Chuck.SetBlock(1, 1, 1);
-        Chuck.SetBlock(1, 0, 1);
-        Chuck.SetBlock(0, 0, 1);
+
+        float Start = glfwGetTime();
+        for (int x = 1; x < ChunkWidth + 1; x++)
+        {
+            for (int y = 1; y < ChunkHeight + 1; y++)
+            {
+                for (int z = 1; z < ChunkWidth + 1; z++)
+                {
+                    Chuck.SetBlock(x, y, z);
+                }
+            }
+        }
+        float End = glfwGetTime();
+        std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
+
+        //std::cout << "X:" << ChunkWidth - 2 << "Y:" << ChunkHeight - 2 << "Z:" << ChunkWidth - 2 << std::endl;
+        
+
+        //Chuck.SetBlock(16, 32, 16);
+        //bool isfull = Chuck.m_BlockMatrix[15][15][31].isEmpty();
+        //std::cout << isfull << std::endl;
+        //Chuck.SetBlock(ChunkWidth, ChunkHeight, ChunkWidth);
+
+
+
         Renderer renderer;
 
 

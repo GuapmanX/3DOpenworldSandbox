@@ -155,6 +155,7 @@
     <ClCompile Include="src\GameObjects\Light_Block.cpp" />
     <ClCompile Include="src\RendererClasses\CubeMap.cpp" />
     <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
+    <ClCompile Include="src\RendererClasses\MIPMAP.cpp" />
     <ClCompile Include="src\RendererClasses\Renderer.cpp" />
     <ClCompile Include="src\RendererClasses\Shader.cpp" />
     <ClCompile Include="src\RendererClasses\Texture.cpp" />
@@ -466,6 +467,7 @@
     <ClInclude Include="src\GameObjects\Light_Block.h" />
     <ClInclude Include="src\RendererClasses\CubeMap.h" />
     <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
+    <ClInclude Include="src\RendererClasses\MIPMAP.h" />
     <ClInclude Include="src\RendererClasses\Renderer.h" />
     <ClInclude Include="src\RendererClasses\Shader.h" />
     <ClInclude Include="src\RendererClasses\Texture.h" />

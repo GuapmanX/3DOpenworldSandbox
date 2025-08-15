@@ -2,12 +2,13 @@
 #include "GameCore/Camera.h"
 #include <iostream>
 #include <vector>
+#include "MIPMAP.h"
 
 unsigned int* Indices = new unsigned int[ChunkWidth * ChunkWidth * ChunkHeight * 36];
 VertexBufferLayout C_VBL;
 IndexBuffer C_IB;
 Shader C_shader;
-Texture C_Texture;
+MIPMAP C_Texture;
 VertexArray C_VA;
 
 void SetIndexBuffer()
@@ -38,15 +39,21 @@ void Setlayout()
 	C_VBL.Push<float>(3);
 
 	//atlas data
-	C_VBL.Push<float>(2); //atlas size
-	C_VBL.Push<float>(2); //single texture size
 	C_VBL.Push<float>(2); //texture position
 	////////
 }
 
 void SetTexture()
 {
-	C_Texture = Texture("res/textures/terrain.png");
+	std::vector<std::string> TEXDATA;
+	TEXDATA.reserve(3);
+	TEXDATA.push_back("res/textures/terrain.png");
+	//Terrain 1 removed because opengl forces to use the next mipmap to be HALF the size, if it isn't, then it just turns black
+	TEXDATA.push_back("res/textures/terrain_2.png");
+	TEXDATA.push_back("res/textures/terrain_3.png");
+
+
+	C_Texture = MIPMAP(TEXDATA);
 }
 
 void Initialize() {
@@ -69,9 +76,9 @@ Chunk::Chunk()
 bool Chunk::CheckForBlock(int x, int y, int z)
 {
 	//Checks if its outside the chunk borders
-	if (x < 0 || x > ChunkWidth) { return true; }
-	if (y < 0 || y > ChunkHeight) { return true; }
-	if (z < 0 || z > ChunkWidth) { return true; }
+	if (x < 0 || x + 1 > ChunkWidth) { return true; }
+	if (y < 0 || y + 1 > ChunkHeight) { return true; }
+	if (z < 0 || z + 1 > ChunkWidth) { return true; }
 	//////////////////////////////////////////
 
 
@@ -109,9 +116,9 @@ void Chunk::RedrawBlock(int x, int y, int z)
 {
 
 	//Checks if its outside the chunk borders
-	if (x < 0 || x > ChunkWidth) { return; }
-	if (y < 0 || y > ChunkHeight) { return; }
-	if (z < 0 || z > ChunkWidth) { return; }
+	if (x < 0 || x + 1 > ChunkWidth) { return; }
+	if (y < 0 || y + 1 > ChunkHeight) { return; }
+	if (z < 0 || z + 1 > ChunkWidth) { return; }
 	////////////////////////////////////////
 
 	if (m_BlockMatrix[x][z][y].isEmpty()) { return; }
@@ -155,10 +162,10 @@ std::vector<Quad> Chunk::GenerateCube(float x, float y, float z, const bool rend
 		FrontFace.v2.NV = { 0.0f, 0.0f, -1.0f };
 		FrontFace.v3.NV = { 0.0f, 0.0f, -1.0f };
 
-		FrontFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		FrontFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		FrontFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		FrontFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		FrontFace.v0.AtlasData = { 3.0f, 15.0f };
+		FrontFace.v1.AtlasData = { 3.0f, 15.0f };
+		FrontFace.v2.AtlasData = { 3.0f, 15.0f };
+		FrontFace.v3.AtlasData = { 3.0f, 15.0f };
 
 		Data.push_back(FrontFace);
 	}
@@ -181,10 +188,10 @@ std::vector<Quad> Chunk::GenerateCube(float x, float y, float z, const bool rend
 		TopFace.v2.NV = { 0.0f, 1.0f, 0.0f };
 		TopFace.v3.NV = { 0.0f, 1.0f, 0.0f };
 
-		TopFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f };
-		TopFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f };
-		TopFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f };
-		TopFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 0.0f, 15.0f };
+		TopFace.v0.AtlasData = { 0.0f, 15.0f };
+		TopFace.v1.AtlasData = { 0.0f, 15.0f };
+		TopFace.v2.AtlasData = { 0.0f, 15.0f };
+		TopFace.v3.AtlasData = { 0.0f, 15.0f };
 
 		Data.push_back(TopFace);
 	}
@@ -207,10 +214,10 @@ std::vector<Quad> Chunk::GenerateCube(float x, float y, float z, const bool rend
 		LeftFace.v2.NV = { -1.0f, 0.0f, 0.0f };
 		LeftFace.v3.NV = { -1.0f, 0.0f, 0.0f };
 
-		LeftFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		LeftFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		LeftFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		LeftFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		LeftFace.v0.AtlasData = { 3.0f, 15.0f };
+		LeftFace.v1.AtlasData = { 3.0f, 15.0f };
+		LeftFace.v2.AtlasData = { 3.0f, 15.0f };
+		LeftFace.v3.AtlasData = { 3.0f, 15.0f };
 
 		Data.push_back(LeftFace);
 	}
@@ -233,10 +240,10 @@ std::vector<Quad> Chunk::GenerateCube(float x, float y, float z, const bool rend
 		RightFace.v2.NV = { 1.0f, 0.0f, 0.0f };
 		RightFace.v3.NV = { 1.0f, 0.0f, 0.0f };
 
-		RightFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		RightFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		RightFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		RightFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		RightFace.v0.AtlasData = { 3.0f, 15.0f };
+		RightFace.v1.AtlasData = { 3.0f, 15.0f };
+		RightFace.v2.AtlasData = { 3.0f, 15.0f };
+		RightFace.v3.AtlasData = { 3.0f, 15.0f };
 
 		Data.push_back(RightFace);
 	}
@@ -259,10 +266,10 @@ std::vector<Quad> Chunk::GenerateCube(float x, float y, float z, const bool rend
 		BackFace.v2.NV = { 0.0f, 0.0f, 1.0f };
 		BackFace.v3.NV = { 0.0f, 0.0f, 1.0f };
 
-		BackFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		BackFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		BackFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
-		BackFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 3.0f, 15.0f };
+		BackFace.v0.AtlasData = { 3.0f, 15.0f };
+		BackFace.v1.AtlasData = { 3.0f, 15.0f };
+		BackFace.v2.AtlasData = { 3.0f, 15.0f };
+		BackFace.v3.AtlasData = { 3.0f, 15.0f };
 
 		Data.push_back(BackFace);
 	}
@@ -285,10 +292,10 @@ std::vector<Quad> Chunk::GenerateCube(float x, float y, float z, const bool rend
 		BottomFace.v2.NV = { 0.0f, -1.0f, 0.0f };
 		BottomFace.v3.NV = { 0.0f, -1.0f, 0.0f };
 
-		BottomFace.v0.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f };
-		BottomFace.v1.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f };
-		BottomFace.v2.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f };
-		BottomFace.v3.AtlasData = { 256.0f, 256.0f, 16.0f, 16.0f, 2.0f, 15.0f };
+		BottomFace.v0.AtlasData = { 2.0f, 15.0f };
+		BottomFace.v1.AtlasData = { 2.0f, 15.0f };
+		BottomFace.v2.AtlasData = { 2.0f, 15.0f };
+		BottomFace.v3.AtlasData = { 2.0f, 15.0f };
 
 		Data.push_back(BottomFace);
 	}
@@ -325,8 +332,28 @@ void Chunk::SetBlockBufferData(int x, int y, int z, bool redrawNearbyBlocks)
 
 void Chunk::SetBlock(int x, int y, int z)
 {
-	m_BlockMatrix[x][z][y].setOccupation(true);
-	SetBlockBufferData(x, y, z, true);
+	//Checks if its outside the chunk borders
+	if (x - 1 < 0 || x > ChunkWidth) { return; }
+	if (y - 1 < 0 || y > ChunkHeight) { return; }
+	if (z - 1 < 0 || z > ChunkWidth) { return; }
+	////////////////////////////////////////
+
+	m_BlockMatrix[x - 1][z - 1][y - 1].setOccupation(true);
+	SetBlockBufferData(x - 1, y - 1, z - 1, true);
+}
+
+void Chunk::DestroyBlock(int x, int y, int z)
+{
+	//Checks if its outside the chunk borders
+	if (x - 1 < 0 || x > ChunkWidth) { return; }
+	if (y - 1 < 0 || y > ChunkHeight) { return; }
+	if (z - 1 < 0 || z > ChunkWidth) { return; }
+	////////////////////////////////////////
+
+	m_BlockMatrix[x - 1][z - 1][y - 1].setOccupation(false);
+	ClearBufferPosition(x - 1, y - 1, z - 1);
+	RedrawNearbyBlocks(x - 1, y - 1, z - 1);
+
 }
 
 void Chunk::Render() {

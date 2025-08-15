@@ -2,7 +2,7 @@
 
 CameraRotation m_Rotation{ 0.0f,0.0f };
 AngleConstraint m_YConstraint{ 70.0f,-70.0f };
-CameraSettings m_Settings{ 0.125f,5.0f };
+CameraSettings m_Settings{ 0.125f,20.0f };
 
 
 glm::mat4 m_viewMartix = glm::mat4(1.0f);
