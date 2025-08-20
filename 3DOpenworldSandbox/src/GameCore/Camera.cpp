@@ -9,7 +9,7 @@ glm::mat4 m_viewMartix = glm::mat4(1.0f);
 glm::vec3 m_Position = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 m_Front = glm::vec3(0.0f, 0.0f, 0.0f);
 
-const glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 10000.0f);
+const glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 99999999.0f);
 
 
 namespace Camera

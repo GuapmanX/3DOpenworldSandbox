@@ -14,7 +14,7 @@ private:
 	bool Moved = false;
 public:
 	Texture() = default;
-	Texture(const std::string& path);
+	Texture(const std::string& path, int WrapMethod = GL_NEAREST);
 	~Texture();
 
 	Texture& operator=(Texture&& other) noexcept;
