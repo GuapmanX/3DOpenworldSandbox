@@ -33,6 +33,7 @@
 #include"GameObjects/Chunk.h"
 #include "MIPMAP.h"
 
+#include "GameObjects/Skybox.h"
 
 
 
@@ -123,6 +124,8 @@ int main(void)
         TEXDATA.push_back("Terrain_3.png");
 
         MIPMAP mpmp(TEXDATA);*/
+
+        Skybox Box;
 
         Chunk Chuck;
 
@@ -216,7 +219,7 @@ int main(void)
 
             renderer.Draw(va, IB, CubeShader);*/
             Chuck.Render();
-
+            Box.Render();
 
 
 

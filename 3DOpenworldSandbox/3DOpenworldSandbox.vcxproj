@@ -153,6 +153,7 @@
     <ClCompile Include="src\GameObjects\Block.cpp" />
     <ClCompile Include="src\GameObjects\Chunk.cpp" />
     <ClCompile Include="src\GameObjects\Light_Block.cpp" />
+    <ClCompile Include="src\GameObjects\Skybox.cpp" />
     <ClCompile Include="src\RendererClasses\CubeMap.cpp" />
     <ClCompile Include="src\RendererClasses\IndexBuffer.cpp" />
     <ClCompile Include="src\RendererClasses\MIPMAP.cpp" />
@@ -465,6 +466,7 @@
     <ClInclude Include="src\GameObjects\Block.h" />
     <ClInclude Include="src\GameObjects\Chunk.h" />
     <ClInclude Include="src\GameObjects\Light_Block.h" />
+    <ClInclude Include="src\GameObjects\Skybox.h" />
     <ClInclude Include="src\RendererClasses\CubeMap.h" />
     <ClInclude Include="src\RendererClasses\IndexBuffer.h" />
     <ClInclude Include="src\RendererClasses\MIPMAP.h" />
@@ -476,6 +478,7 @@
     <ClInclude Include="src\RendererClasses\VertexBufferLayout.h" />
     <ClInclude Include="src\Shapes\Cube.h" />
     <ClInclude Include="src\Shapes\dynamicCube.h" />
+    <ClInclude Include="src\Shapes\enums.h" />
     <ClInclude Include="src\Shapes\VertexStructs.h" />
   </ItemGroup>
   <ItemGroup>
@@ -489,6 +492,7 @@
     <None Include="res\shaders\3DObjectLighting.shader" />
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\BatchRendering.shader" />
+    <None Include="res\shaders\Skybox.shader" />
     <None Include="src\Addons\glm\detail\func_common.inl" />
     <None Include="src\Addons\glm\detail\func_common_simd.inl" />
     <None Include="src\Addons\glm\detail\func_exponential.inl" />

@@ -46,11 +46,12 @@ void Setlayout()
 void SetTexture()
 {
 	std::vector<std::string> TEXDATA;
-	TEXDATA.reserve(3);
+	TEXDATA.reserve(5);
 	TEXDATA.push_back("res/textures/terrain.png");
-	//Terrain 1 removed because opengl forces to use the next mipmap to be HALF the size, if it isn't, then it just turns black
 	TEXDATA.push_back("res/textures/terrain_2.png");
 	TEXDATA.push_back("res/textures/terrain_3.png");
+	TEXDATA.push_back("res/textures/terrain_4.png");
+	TEXDATA.push_back("res/textures/terrain_5.png");
 
 
 	C_Texture = MIPMAP(TEXDATA);

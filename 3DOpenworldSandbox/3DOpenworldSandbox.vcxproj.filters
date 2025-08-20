@@ -93,6 +93,9 @@
     <ClCompile Include="src\RendererClasses\MIPMAP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameObjects\Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\GLFW\include\GLFW\glfw3.h">
@@ -1037,6 +1040,12 @@
     <ClInclude Include="src\RendererClasses\MIPMAP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameObjects\Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shapes\enums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\GLFW\lib-vc2022\glfw3.lib" />
@@ -1457,5 +1466,6 @@
     <None Include="res\shaders\3DObjectLighting.shader" />
     <None Include="res\shaders\3DObjectLight.shader" />
     <None Include="res\shaders\3DObjectATLASEARTH.shader" />
+    <None Include="res\shaders\Skybox.shader" />
   </ItemGroup>
 </Project>

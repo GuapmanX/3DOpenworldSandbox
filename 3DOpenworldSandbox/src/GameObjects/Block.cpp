@@ -46,7 +46,7 @@ void InitBuffer()
          20, 21, 22, // first triangle
          22, 23, 20  // second triangle
     };
-	std::vector<unsigned int> Layout = { 3, 3, 2, 3 };
+	std::vector<unsigned int> Layout = { 3, 3, 2, 3, 2 };
 	Cube Ps = CreateCube(0.0f, 0.0f, 0.0f, 0.5f);
 
 	GB_BUFFER = BufferObject(&Ps, sizeof(Cube), IBBuffer, 36, Layout);

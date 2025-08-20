@@ -18,6 +18,7 @@ private:
 public:
 	glm::vec3 m_Position;
 	glm::vec3 m_Rotation;
+	glm::mat4 m_Scale;
 
 	Block(const glm::vec3& Position = glm::vec3(0.0f, 0.0f, 0.0f));
 	~Block();

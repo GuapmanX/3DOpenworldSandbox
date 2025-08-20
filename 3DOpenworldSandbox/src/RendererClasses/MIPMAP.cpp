@@ -16,7 +16,6 @@ MIPMAP::MIPMAP(std::vector<std::string> Levels)
 	for (unsigned int level = 0; level < Levels.size(); level++)
 	{
 		unsigned char* m_LocalBuffer = stbi_load(Levels[level].c_str(), &m_Width, &m_Height, &m_BPP, 0);
-		std::cout << m_Width << " " << m_Height << std::endl;
 
 		if (m_LocalBuffer)
 		{
