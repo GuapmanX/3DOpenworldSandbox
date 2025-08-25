@@ -24,7 +24,7 @@ struct BlockData
 	int type = 0;
 	bool full = false;
 
-	const bool isEmpty() {
+	const bool isEmpty() const {
 		return !full;
 	}
 
@@ -33,18 +33,26 @@ struct BlockData
 	}
 };
 
-
 class Chunk
 {
 public:
 	BlockData m_BlockMatrix[ChunkWidth][ChunkWidth][ChunkHeight]; // XZY
-	VertexBuffer Positions = VertexBuffer(nullptr, bytesPerCube * (ChunkWidth) * (ChunkWidth) * (ChunkHeight), GL_DYNAMIC_DRAW);
+	VertexBuffer Positions{ nullptr, bytesPerCube * (ChunkWidth) * (ChunkWidth) * (ChunkHeight), GL_DYNAMIC_DRAW };
 	VertexArray va;
+
+	glm::mat4 m_ModelMatrix{ 1.0f };
+	glm::vec3 m_Position{ 0.0f,0.0f,0.0f };
 
 	void SetBlock(int x, int y, int z);
 	void DestroyBlock(int x, int y, int z);
 	void Render();
-	Chunk();
+	void Move(float x, float y, float z);
+
+	Chunk(float x, float y, float z);
+	~Chunk();
+
+	Chunk& operator=(Chunk&& other) noexcept;
+	Chunk& operator=(Chunk& other) noexcept;
 private:
 	bool CheckForBlock(int x, int y, int z);
 	void CheckNearbyBlocks(bool (&values)[6], int& faceCount,int x, int y, int z);

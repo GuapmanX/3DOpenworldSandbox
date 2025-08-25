@@ -64,13 +64,29 @@ void Initialize() {
 	SetTexture();
 }
 
-Chunk::Chunk()
+Chunk::Chunk(float x, float y, float z)
 {
 	va.AddBuffer(Positions, C_VBL);
 	C_shader.Bind();
 	C_Texture.Bind(0);
 	C_shader.SetUniform1i("u_Texture", 0);
 	C_shader.Unbind();
+	Move(x, y, z);
+}
+
+Chunk::~Chunk() {
+	
+}
+
+Chunk& Chunk::operator=(Chunk&& other) noexcept
+{
+	// TODO: insert return statement here
+	
+}
+
+Chunk& Chunk::operator=(Chunk& other) noexcept
+{
+	// TODO: insert return statement here
 }
 
 
@@ -84,6 +100,15 @@ bool Chunk::CheckForBlock(int x, int y, int z)
 
 
 	return m_BlockMatrix[x][z][y].isEmpty(); //Checks if theres a block in the specific space
+}
+
+void Chunk::Move(float x, float y, float z)
+{
+	m_Position.x = x;
+	m_Position.y = y;
+	m_Position.z = z;
+
+	m_ModelMatrix = glm::translate(m_ModelMatrix, m_Position);
 }
 
 void Chunk::CheckNearbyBlocks(bool (&values)[6],int& faceCount, int x, int y, int z)
@@ -360,7 +385,7 @@ void Chunk::DestroyBlock(int x, int y, int z)
 void Chunk::Render() {
 
 	C_shader.Bind();
-	C_shader.SetUniformMat4f("Model", glm::mat4(1.0f));
+	C_shader.SetUniformMat4f("Model", m_ModelMatrix);
 	C_shader.SetUniformMat4f("View", Camera::GetViewMatrix());
 	C_shader.SetUniformMat4f("Projection", Camera::GetProjection());
 	C_shader.Unbind();

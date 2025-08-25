@@ -21,7 +21,6 @@
 
 #include "GameCore/Camera.h"
 #include "GameCore/Time.h"
-#include <functional>
 
 
 #include "GameObjects/Block.h"
@@ -34,7 +33,7 @@
 #include "MIPMAP.h"
 
 #include "GameObjects/Skybox.h"
-
+#include "Managers/ChunkManager.h"
 
 
 
@@ -127,7 +126,8 @@ int main(void)
 
         Skybox Box;
 
-        Chunk Chuck;
+        /*Chunk Chuck( 0.0f, 0.0f, 0.0f ); 
+        Chunk Chuck2(16.0f, 0.0f, 0.0f);
 
         float Start = glfwGetTime();
         for (int x = 1; x < ChunkWidth + 1; x++)
@@ -137,11 +137,12 @@ int main(void)
                 for (int z = 1; z < ChunkWidth + 1; z++)
                 {
                     Chuck.SetBlock(x, y, z);
+                    Chuck2.SetBlock(x, y, z);
                 }
             }
         }
         float End = glfwGetTime();
-        std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
+        std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;*/
 
         //std::cout << "X:" << ChunkWidth - 2 << "Y:" << ChunkHeight - 2 << "Z:" << ChunkWidth - 2 << std::endl;
         
@@ -150,8 +151,10 @@ int main(void)
         //bool isfull = Chuck.m_BlockMatrix[15][15][31].isEmpty();
         //std::cout << isfull << std::endl;
         //Chuck.SetBlock(ChunkWidth, ChunkHeight, ChunkWidth);
+        set_chunk_buffer_size(30);
 
 
+        
 
         Renderer renderer;
 
@@ -198,9 +201,9 @@ int main(void)
 
             //FirstBlock.Update(Time::GetDeltaTime());
 
-            glm::mat4 View = Camera::GetViewMatrix();
-            glm::mat4 Projection = Camera::GetProjection();
-            glm::mat4 Model = glm::mat4(1.0f);
+            //glm::mat4 View = Camera::GetViewMatrix();
+            //glm::mat4 Projection = Camera::GetProjection();
+            //glm::mat4 Model = glm::mat4(1.0f);
 
             //glm::mat4 mvp = Projection * View * Model;
 
@@ -218,7 +221,9 @@ int main(void)
             CubeShader.Unbind();
 
             renderer.Draw(va, IB, CubeShader);*/
-            Chuck.Render();
+            render_chunks();
+            //Chuck.Render();
+            //Chuck2.Render();
             Box.Render();
 
 
