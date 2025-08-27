@@ -2,6 +2,7 @@
 #include "GameCore/Camera.h"
 #include <iostream>
 #include <vector>
+#include <iterator>
 #include "MIPMAP.h"
 
 unsigned int* Indices = new unsigned int[ChunkWidth * ChunkWidth * ChunkHeight * 36];
@@ -78,16 +79,14 @@ Chunk::~Chunk() {
 	
 }
 
-Chunk& Chunk::operator=(Chunk&& other) noexcept
+Chunk::Chunk(Chunk&& other) noexcept
 {
-	// TODO: insert return statement here
-	
+	std::copy(&other.m_BlockMatrix[0][0][0], &other.m_BlockMatrix[0][0][0] + ChunkWidth * ChunkWidth * ChunkHeight, &this->m_BlockMatrix[0][0][0]);
+	this->Positions = other.Positions;
+	this->Move(other.m_Position.x, other.m_Position.y, other.m_Position.z);
+	this->va = other.va;
 }
 
-Chunk& Chunk::operator=(Chunk& other) noexcept
-{
-	// TODO: insert return statement here
-}
 
 
 bool Chunk::CheckForBlock(int x, int y, int z)

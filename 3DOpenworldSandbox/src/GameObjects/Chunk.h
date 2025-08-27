@@ -49,10 +49,15 @@ public:
 	void Move(float x, float y, float z);
 
 	Chunk(float x, float y, float z);
+	//Chunk() = default;
 	~Chunk();
 
-	Chunk& operator=(Chunk&& other) noexcept;
-	Chunk& operator=(Chunk& other) noexcept;
+	Chunk(const Chunk&) = default;
+	Chunk& operator=(const Chunk&) = default;
+	Chunk& operator=(Chunk&&) = default;
+
+	Chunk(Chunk&& other) noexcept;
+
 private:
 	bool CheckForBlock(int x, int y, int z);
 	void CheckNearbyBlocks(bool (&values)[6], int& faceCount,int x, int y, int z);

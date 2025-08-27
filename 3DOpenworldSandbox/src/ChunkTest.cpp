@@ -152,7 +152,11 @@ int main(void)
         //std::cout << isfull << std::endl;
         //Chuck.SetBlock(ChunkWidth, ChunkHeight, ChunkWidth);
         set_chunk_buffer_size(30);
+        build_chunk(1, 0.0f, 0.0f, 0.0f);
+        build_chunk(5, 32.0f, 32.0f, 32.0f);
 
+        float timepassed = 0.0f;
+        bool deleted = false;
 
         
 
@@ -170,6 +174,12 @@ int main(void)
             Time::UpdateDeltaTime();
 
 
+            timepassed += Time::GetDeltaTime();
+            if (timepassed > 10.0f and not deleted) {
+                deleted = true;
+                clear_chunk(5);
+                build_chunk(3, 0.0f, 32.0f, 0.0f);
+            }
             //std::cout << DT.GetDeltaTime() << std::endl;
 
             ///////CAMERA SYSTEM//////////////
