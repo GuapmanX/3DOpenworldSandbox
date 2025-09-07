@@ -19,6 +19,11 @@ const int bytesPerCube = sizeof(Quad) * 6;
 
 void Initialize();
 
+struct gpu_Cube {
+	Quad surfaces[6];
+	int faces_to_render = 0;
+};
+
 struct BlockData
 {
 	int type = 0;
@@ -43,6 +48,9 @@ public:
 	glm::mat4 m_ModelMatrix{ 1.0f };
 	glm::vec3 m_Position{ 0.0f,0.0f,0.0f };
 
+	gpu_Cube* gpu_data = new gpu_Cube[ChunkWidth * ChunkWidth * ChunkHeight];
+	
+
 	void SetBlock(int x, int y, int z);
 	void DestroyBlock(int x, int y, int z);
 	void Render();
@@ -58,12 +66,34 @@ public:
 
 	Chunk(Chunk&& other) noexcept;
 
+//both are seperate to make sure it's multithreadable because OpenGL hates multithreading
+
+	//gpu data processing
+	void UpdateBlock_GPU(int x, int y, int z);
+
+	//cpu data processing
+	void SetBlock_CPU(int x, int y, int z);
+	void DestroyBlock_CPU(int x, int y, int z);
+
+
+
 private:
+	//general
 	bool CheckForBlock(int x, int y, int z);
 	void CheckNearbyBlocks(bool (&values)[6], int& faceCount,int x, int y, int z);
+	//
+
+	//universal(does CPU and GPU at the same time, but can't be multithreaded)
 	void SetBlockBufferData(int x, int y, int z, bool RedrawNearbyBlocks);
 	void RedrawBlock(int x, int y, int z);
 	void ClearBufferPosition(int x, int y, int z);
 	void RedrawNearbyBlocks(int x, int y, int z);
-	std::vector<Quad> GenerateCube(float x, float y, float z, const bool render[6], const int faces);
+	void GenerateCube(std::vector<Quad>& Data, float x, float y, float z, const bool render[6], const int faces);
+
+	//CPU only data prep that can be multithreaded
+	void PrepareBlockCPUData(int x, int y, int z, bool RedrawNearbyBlocks);
+	void RedrawBlock_CPU(int x, int y, int z);
+	void ClearBufferPosition_CPU(int x, int y, int z);
+	void RedrawNearbyBlocks_CPU(int x, int y, int z);
+	void GenerateCube_CPU(Quad(&data)[6], float x, float y, float z, const bool render[6], const int faces);
 };

@@ -151,9 +151,16 @@ int main(void)
         //bool isfull = Chuck.m_BlockMatrix[15][15][31].isEmpty();
         //std::cout << isfull << std::endl;
         //Chuck.SetBlock(ChunkWidth, ChunkHeight, ChunkWidth);
-        set_chunk_buffer_size(30);
-        build_chunk(1, 0.0f, 0.0f, 0.0f);
-        build_chunk(5, 32.0f, 32.0f, 32.0f);
+        set_chunk_buffer_size();
+        //build_chunk(1, 0.0f, 0.0f, 0.0f);
+
+        float Start = glfwGetTime();
+        //build_chunk(5, 32.0f, 32.0f, 32.0f);
+            build_chunk_cpu(5, 32.0f, 32.0f, 32.0f);
+            GPU_upload(5);
+        float End = glfwGetTime();
+
+        std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
 
         float timepassed = 0.0f;
         bool deleted = false;
@@ -175,10 +182,10 @@ int main(void)
 
 
             timepassed += Time::GetDeltaTime();
-            if (timepassed > 10.0f and not deleted) {
+            if (timepassed > 5.0f and not deleted) {
                 deleted = true;
-                clear_chunk(5);
-                build_chunk(3, 0.0f, 32.0f, 0.0f);
+                build_chunk_cpu(3, 32.0f, 64.0f, 32.0f);
+                GPU_upload(3);
             }
             //std::cout << DT.GetDeltaTime() << std::endl;
 
@@ -209,28 +216,6 @@ int main(void)
             Camera::Update();
 
 
-            //FirstBlock.Update(Time::GetDeltaTime());
-
-            //glm::mat4 View = Camera::GetViewMatrix();
-            //glm::mat4 Projection = Camera::GetProjection();
-            //glm::mat4 Model = glm::mat4(1.0f);
-
-            //glm::mat4 mvp = Projection * View * Model;
-
-
-            //m_Shader->ExcecuteShader();
-
-
-
-            //m_Shader->SetUniformMat4f("u_MVP", mvp);
-
-            /*CubeShader.Bind();
-            CubeShader.SetUniformMat4f("Model", Model);
-            CubeShader.SetUniformMat4f("View", View);
-            CubeShader.SetUniformMat4f("Projection", Projection);
-            CubeShader.Unbind();
-
-            renderer.Draw(va, IB, CubeShader);*/
             render_chunks();
             //Chuck.Render();
             //Chuck2.Render();

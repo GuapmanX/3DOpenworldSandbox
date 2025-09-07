@@ -30,7 +30,6 @@ struct NormalVector
 struct Vertex
 {
     Vector3 Position{ 0.0f ,0.0f, 0.0f };
-    RGB Color = { 1.0f, 0.0f, 0.0f };
     TextureCoordinates2D TC{ 0.0f, 0.0f };
     NormalVector NV{ 0.0f,0.0f,0.0f };
     AtlasData AtlasData{ 0.0f, 0.0f };
