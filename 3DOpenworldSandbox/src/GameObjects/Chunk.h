@@ -21,7 +21,7 @@ void Initialize();
 
 struct gpu_Cube {
 	Quad surfaces[6];
-	int faces_to_render = 0;
+	unsigned int faces_to_render = 0;
 };
 
 struct BlockData
@@ -46,7 +46,8 @@ public:
 	VertexArray va;
 
 	glm::mat4 m_ModelMatrix{ 1.0f };
-	glm::vec3 m_Position{ 0.0f,0.0f,0.0f };
+	glm::vec3 m_Position{ 1.0f,1.0f,1.0f };
+	glm::vec3 BlocksLoaded{ 1,1,1 };
 
 	gpu_Cube* gpu_data = new gpu_Cube[ChunkWidth * ChunkWidth * ChunkHeight];
 	

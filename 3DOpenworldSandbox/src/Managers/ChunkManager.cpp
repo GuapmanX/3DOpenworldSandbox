@@ -2,17 +2,15 @@
 #include <iostream>
 #include <future>
 
-
-
-const int max_buffer_size = 20;
-
 std::vector<std::optional<Chunk>> ChunkCluster;
-std::mutex mutexes[max_buffer_size];
+std::mutex* mutexes = new std::mutex[max_buffer_size];
 
-std::vector<std::future<void>> Tasks;
+
+std::vector<std::optional<std::shared_future<int>>> Tasks;
 
 void set_chunk_buffer_size()
 {
+	Tasks.resize(max_buffer_size);
 	ChunkCluster.resize(max_buffer_size);
 }
 
@@ -36,13 +34,11 @@ void build_chunk(int slot, float c_x, float c_y, float c_z) {
 	}
 }
 
-void build_chunk_cpu(int slot, float c_x, float c_y, float c_z) {
+int build_chunk_cpu(int slot) {
 	if (slot > max_buffer_size or slot < 0) {
 		std::cout << "Buffer size exceeded!" << "\n";
-		return;
+		return -1;
 	}
-
-	ChunkCluster[slot] = Chunk(c_x, c_y, c_z);
 
 	for (int x = 1; x < ChunkWidth + 1; x++)
 	{
@@ -54,25 +50,39 @@ void build_chunk_cpu(int slot, float c_x, float c_y, float c_z) {
 			}
 		}
 	}
+
+	return slot;
 }
 
-void GPU_upload(int slot) {
+bool GPU_upload(int slot) {
 	if (slot > max_buffer_size or slot < 0) {
 		std::cout << "Buffer size exceeded!" << "\n";
-		return;
+		return false;
 	}
 
+	unsigned int blocks_built = 0;
+	glm::vec3 Loaded = ChunkCluster[slot].value().BlocksLoaded;
 
-	for (int x = 1; x < ChunkWidth + 1; x++)
+	for (int x = Loaded.x; x < ChunkWidth + 1; x++)
 	{
-		for (int y = 1; y < ChunkHeight + 1; y++)
+		Loaded.x = 1;
+		for (int y = Loaded.y; y < ChunkHeight + 1; y++)
 		{
-			for (int z = 1; z < ChunkWidth + 1; z++)
+			Loaded.y = 1;
+			for (int z = Loaded.z; z < ChunkWidth + 1; z++)
 			{
+				Loaded.z = 1;
+				//std::cout << x << " " << y << " " << z << std::endl;
 				ChunkCluster[slot].value().UpdateBlock_GPU(x, y, z);
+				blocks_built++;
+				if (blocks_built >= lazy_chunk_loading_amount) {
+					ChunkCluster[slot].value().BlocksLoaded = glm::vec3(x, y, z);
+					return false;
+				}
 			}
 		}
 	}
+	return true;
 }
 
 void clear_chunk(int slot) {
@@ -87,28 +97,40 @@ void render_chunks() {
 				ChunkCluster[i].value().Render();
 				//std::cout << i << "\n";
 			}
+			else {
+				//std::cout << "failed on index:" << i << std::endl;
+			}
 			mutexes[i].unlock();
-		}
-		else
-		{
-			//std::cout << "failed on index: " << i << std::endl;
 		}
 	}
 }
 
-
-void build_chunk_formt(unsigned int index) {
-	std::lock_guard<std::mutex> lock(mutexes[index]);
-
-	for (int x = 1; x < ChunkWidth + 1; x++)
-	{
-		for (int y = 1; y < ChunkHeight + 1; y++)
-		{
-			for (int z = 1; z < ChunkWidth + 1; z++)
-			{
-				ChunkCluster[index].value().SetBlock(x, y, z);
-				std::cout << "not freezing" << std::endl;
+void check_for_finished_chunks() {
+	for (unsigned int i = 0; i < Tasks.capacity(); i++) {
+		if (Tasks[i].has_value()) {
+			if (Tasks[i].value().valid()) {
+				//identify which exact chunk to build in a memory safe manner
+				int chunk_index = Tasks[i].value().get();
+				bool finished = GPU_upload(chunk_index);
+				//std::cout << finished << std::endl;
+				if (finished) {
+					Tasks[i] = std::shared_future<int>();
+					Tasks[i].reset();
+				}
+				else
+				{
+					break;
+				}
 			}
+		}
+	}
+}
+
+static void append_task(std::shared_future<int> method) {
+	for (unsigned int i = 0; i < Tasks.capacity(); i++) {
+		if (!Tasks[i].has_value()) {
+			Tasks[i] = std::move(method);
+			break;
 		}
 	}
 }
@@ -118,6 +140,7 @@ void mt_build_chunk(int slot, float c_x, float c_y, float c_z) {
 		std::cout << "Buffer size exceeded!" << "\n";
 		return;
 	}
+
 	ChunkCluster[slot] = Chunk(c_x, c_y, c_z);
-	Tasks.push_back(std::async(std::launch::async, build_chunk_formt, slot));
+	append_task(std::async(std::launch::async, build_chunk_cpu, slot));
 }

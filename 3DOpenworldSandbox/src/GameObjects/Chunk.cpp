@@ -67,7 +67,6 @@ void Initialize() {
 
 Chunk::Chunk(float x, float y, float z)
 {
-	std::cout << "started construction\n";
 	va.AddBuffer(Positions, C_VBL);
 	C_shader.Bind();
 	C_Texture.Bind(0);
@@ -335,8 +334,12 @@ void Chunk::ClearBufferPosition(int x, int y, int z)
 	int linearIndex = x + ChunkWidth * (y + ChunkHeight * z);
 	int bufferOffset = linearIndex * bytesPerCube;
 
-	std::vector<GLubyte> zeros(bytesPerCube, 0);
-	Positions.SetBufferData(zeros.data(), bufferOffset, bytesPerCube);
+	GLubyte zeros[bytesPerCube];
+	for (int i = 0; i < bytesPerCube; i++) {
+		zeros[i] = 0;
+	}
+	//std::vector<GLubyte> zeros(bytesPerCube, 0);
+	Positions.SetBufferData(zeros, bufferOffset, bytesPerCube);
 }
 
 void Chunk::SetBlockBufferData(int x, int y, int z, bool redrawNearbyBlocks)
@@ -354,11 +357,13 @@ void Chunk::SetBlockBufferData(int x, int y, int z, bool redrawNearbyBlocks)
 		RedrawNearbyBlocks(x, y, z);
 
 
-	std::vector<Quad> PartialCube;
-	GenerateCube(PartialCube, (float)x, (float)y, (float)z, faces, faceAmount);
+	Quad FullCube[6];
+	GenerateCube_CPU(FullCube, (float)x, (float)y, (float)z, faces, faceAmount);
+	//std::vector<Quad> PartialCube;
+	//GenerateCube(PartialCube, (float)x, (float)y, (float)z, faces, faceAmount);
 	/////////////////////////////////////////////
 
-	Positions.SetBufferData(PartialCube.data(), bufferOffset, sizeof(Quad) * faceAmount);
+	Positions.SetBufferData(FullCube, bufferOffset, sizeof(Quad) * faceAmount);
 }
 
 void Chunk::SetBlock(int x, int y, int z)

@@ -81,7 +81,7 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);//locks the framerate to monitors refresh rate(2 would be 2x slower than monitors refresh rate)
+    //glfwSwapInterval(1);//locks the framerate to monitors refresh rate(2 would be 2x slower than monitors refresh rate)
 
 
     if (glewInit() != GLEW_OK)
@@ -115,49 +115,18 @@ int main(void)
 
         Initialize();
 
-        /*std::vector<std::string> TEXDATA;
-        TEXDATA.reserve(4);
-        TEXDATA.push_back("Terrain.png");
-        TEXDATA.push_back("Terrain_1.png");
-        TEXDATA.push_back("Terrain_2.png");
-        TEXDATA.push_back("Terrain_3.png");
 
-        MIPMAP mpmp(TEXDATA);*/
 
         Skybox Box;
 
-        /*Chunk Chuck( 0.0f, 0.0f, 0.0f ); 
-        Chunk Chuck2(16.0f, 0.0f, 0.0f);
 
-        float Start = glfwGetTime();
-        for (int x = 1; x < ChunkWidth + 1; x++)
-        {
-            for (int y = 1; y < ChunkHeight + 1; y++)
-            {
-                for (int z = 1; z < ChunkWidth + 1; z++)
-                {
-                    Chuck.SetBlock(x, y, z);
-                    Chuck2.SetBlock(x, y, z);
-                }
-            }
-        }
-        float End = glfwGetTime();
-        std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;*/
-
-        //std::cout << "X:" << ChunkWidth - 2 << "Y:" << ChunkHeight - 2 << "Z:" << ChunkWidth - 2 << std::endl;
-        
-
-        //Chuck.SetBlock(16, 32, 16);
-        //bool isfull = Chuck.m_BlockMatrix[15][15][31].isEmpty();
-        //std::cout << isfull << std::endl;
-        //Chuck.SetBlock(ChunkWidth, ChunkHeight, ChunkWidth);
         set_chunk_buffer_size();
         //build_chunk(1, 0.0f, 0.0f, 0.0f);
 
+        //mt_build_chunk(5, 32.0f, 32.0f, 32.0f);
+        //build_chunk_cpu(5, 32.0f, 32.0f, 32.0f);
         float Start = glfwGetTime();
-        //build_chunk(5, 32.0f, 32.0f, 32.0f);
-            build_chunk_cpu(5, 32.0f, 32.0f, 32.0f);
-            GPU_upload(5);
+        mt_build_chunk(0, 32.0f, 32.0f, 32.0f);
         float End = glfwGetTime();
 
         std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
@@ -180,14 +149,18 @@ int main(void)
         {
             Time::UpdateDeltaTime();
 
-
             timepassed += Time::GetDeltaTime();
             if (timepassed > 5.0f and not deleted) {
                 deleted = true;
-                build_chunk_cpu(3, 32.0f, 64.0f, 32.0f);
-                GPU_upload(3);
+                float Start = glfwGetTime();
+                    for (unsigned int i = 1; i < 20; i++) {
+                        mt_build_chunk(i, 32.0f, 32.0f * ((float)i + 1.0f), 32.0f);
+                    }
+                float End = glfwGetTime();
+
+                //std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
+
             }
-            //std::cout << DT.GetDeltaTime() << std::endl;
 
             ///////CAMERA SYSTEM//////////////
             double mouseX, mouseY;
@@ -215,7 +188,7 @@ int main(void)
 
             Camera::Update();
 
-
+            check_for_finished_chunks();
             render_chunks();
             //Chuck.Render();
             //Chuck2.Render();
