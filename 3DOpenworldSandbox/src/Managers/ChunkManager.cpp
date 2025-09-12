@@ -1,12 +1,24 @@
 #include "ChunkManager.h"
 #include <iostream>
 #include <future>
+#include <optional>
+#include <list>
+
+struct ChunkConstructionData
+{
+	int slot;
+	float x, y, z;
+};
 
 std::vector<std::optional<Chunk>> ChunkCluster;
 std::mutex* mutexes = new std::mutex[max_buffer_size];
 
 
 std::vector<std::optional<std::shared_future<int>>> Tasks;
+
+std::list<ChunkConstructionData> chunk_queue;
+
+
 
 void set_chunk_buffer_size()
 {
@@ -116,6 +128,7 @@ void check_for_finished_chunks() {
 				if (finished) {
 					Tasks[i] = std::shared_future<int>();
 					Tasks[i].reset();
+					ChunkCluster[i].value().loaded = true;//allows it to be rendered
 				}
 				else
 				{
@@ -123,6 +136,15 @@ void check_for_finished_chunks() {
 				}
 			}
 		}
+	}
+}
+
+void move_build_queue() {
+	for (unsigned int i = 0; i < lazy_chunk_construction_amount; i++) {
+		if (chunk_queue.empty()) { break; }
+		ChunkConstructionData Data = chunk_queue.back();
+		mt_build_chunk(Data.slot, Data.x, Data.y, Data.z);
+		chunk_queue.pop_back();
 	}
 }
 
@@ -143,4 +165,8 @@ void mt_build_chunk(int slot, float c_x, float c_y, float c_z) {
 
 	ChunkCluster[slot] = Chunk(c_x, c_y, c_z);
 	append_task(std::async(std::launch::async, build_chunk_cpu, slot));
+}
+
+void queue_chunk_build(int slot, float c_x, float c_y, float c_z) {
+	chunk_queue.push_front({ slot,c_x,c_y,c_z });
 }

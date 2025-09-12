@@ -394,7 +394,7 @@ void Chunk::DestroyBlock(int x, int y, int z)
 }
 
 void Chunk::Render() {
-
+	if (!loaded) { return; }
 	C_shader.Bind();
 	C_shader.SetUniformMat4f("Model", m_ModelMatrix);
 	C_shader.SetUniformMat4f("View", Camera::GetViewMatrix());

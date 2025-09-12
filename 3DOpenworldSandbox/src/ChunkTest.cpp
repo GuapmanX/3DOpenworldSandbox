@@ -81,7 +81,7 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
-    //glfwSwapInterval(1);//locks the framerate to monitors refresh rate(2 would be 2x slower than monitors refresh rate)
+    glfwSwapInterval(1);//locks the framerate to monitors refresh rate(2 would be 2x slower than monitors refresh rate)
 
 
     if (glewInit() != GLEW_OK)
@@ -97,10 +97,7 @@ int main(void)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
 
-        
-        const int ChunkWidth = 16;
-        const int ChunkHeight = 32;
-        unsigned int* Indices = new unsigned int[ChunkWidth * ChunkWidth * ChunkHeight * 36];
+       
     {
         GLCall(glEnable(GL_BLEND)); //Enables blending
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)); //tells what the blended pixels should look like
@@ -154,11 +151,11 @@ int main(void)
                 deleted = true;
                 float Start = glfwGetTime();
                     for (unsigned int i = 1; i < 20; i++) {
-                        mt_build_chunk(i, 32.0f, 32.0f * ((float)i + 1.0f), 32.0f);
+                        queue_chunk_build(i, 32.0f, 32.0f * ((float)i + 1.0f), 32.0f);
                     }
                 float End = glfwGetTime();
 
-                //std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
+                std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
 
             }
 
@@ -188,6 +185,7 @@ int main(void)
 
             Camera::Update();
 
+            move_build_queue();
             check_for_finished_chunks();
             render_chunks();
             //Chuck.Render();
@@ -213,8 +211,6 @@ int main(void)
             glfwPollEvents();
         }
     }
-    delete[] Indices;
-    Indices = nullptr;
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

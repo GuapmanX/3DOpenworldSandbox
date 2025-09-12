@@ -50,6 +50,7 @@ public:
 	glm::vec3 BlocksLoaded{ 1,1,1 };
 
 	gpu_Cube* gpu_data = new gpu_Cube[ChunkWidth * ChunkWidth * ChunkHeight];
+	bool loaded = false;
 	
 
 	void SetBlock(int x, int y, int z);
