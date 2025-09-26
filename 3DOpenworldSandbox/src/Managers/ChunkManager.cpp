@@ -3,6 +3,12 @@
 #include <future>
 #include <optional>
 #include <list>
+#include <map>
+#include <cmath>
+
+
+
+
 
 struct ChunkConstructionData
 {
@@ -15,6 +21,7 @@ std::mutex* mutexes = new std::mutex[max_buffer_size];
 
 
 std::vector<std::optional<std::shared_future<int>>> Tasks;
+std::map<Key2, unsigned int> position_index; //gives the index of a chunk based on it's positions
 
 std::list<ChunkConstructionData> chunk_queue;
 
@@ -26,25 +33,25 @@ void set_chunk_buffer_size()
 	ChunkCluster.resize(max_buffer_size);
 }
 
-void build_chunk(int slot, float c_x, float c_y, float c_z) {
-	if (slot > max_buffer_size or slot < 0) { 
-		std::cout << "Buffer size exceeded!" << "\n";
-		return; 
-	}
-
-	ChunkCluster[slot] = Chunk(c_x, c_y, c_z);
-
-	for (int x = 1; x < ChunkWidth + 1; x++)
-	{
-		for (int y = 1; y < ChunkHeight + 1; y++)
-		{
-			for (int z = 1; z < ChunkWidth + 1; z++)
-			{
-				ChunkCluster[slot].value().SetBlock(x, y, z);
-			}
-		}
-	}
-}
+//void build_chunk(int slot, float c_x, float c_y, float c_z) {
+//	if (slot > max_buffer_size or slot < 0) { 
+//		std::cout << "Buffer size exceeded!" << "\n";
+//		return; 
+//	}
+//
+//	ChunkCluster[slot] = Chunk(c_x, c_y, c_z);
+//
+//	for (int x = 1; x < ChunkWidth + 1; x++)
+//	{
+//		for (int y = 1; y < ChunkHeight + 1; y++)
+//		{
+//			for (int z = 1; z < ChunkWidth + 1; z++)
+//			{
+//				ChunkCluster[slot].value().SetBlock(x, y, z);
+//			}
+//		}
+//	}
+//}
 
 int build_chunk_cpu(int slot) {
 	if (slot > max_buffer_size or slot < 0) {
@@ -54,7 +61,7 @@ int build_chunk_cpu(int slot) {
 
 	for (int x = 1; x < ChunkWidth + 1; x++)
 	{
-		for (int y = 1; y < ChunkHeight + 1; y++)
+		for (int y = 1; y < ChunkHeight/2 + 1; y++)
 		{
 			for (int z = 1; z < ChunkWidth + 1; z++)
 			{
@@ -73,7 +80,7 @@ bool GPU_upload(int slot) {
 	}
 
 	unsigned int blocks_built = 0;
-	glm::vec3 Loaded = ChunkCluster[slot].value().BlocksLoaded;
+	glm::ivec3 Loaded = ChunkCluster[slot].value().BlocksLoaded;
 
 	for (int x = Loaded.x; x < ChunkWidth + 1; x++)
 	{
@@ -99,21 +106,24 @@ bool GPU_upload(int slot) {
 
 void clear_chunk(int slot) {
 	
+	int x = ChunkCluster[slot].value().location_index.x;
+	int z = ChunkCluster[slot].value().location_index.y;
+	position_index.erase({ x, z });
 	ChunkCluster[slot].reset();
 }
 
 void render_chunks() {
 	for (unsigned int i = 0; i < ChunkCluster.capacity(); i++) {
-		if (mutexes[i].try_lock()) {
+		//if (mutexes[i].try_lock()) { //realised that mutexes are useless in this implementation
 			if (ChunkCluster[i].has_value()) {
 				ChunkCluster[i].value().Render();
 				//std::cout << i << "\n";
 			}
-			else {
+			//else {
 				//std::cout << "failed on index:" << i << std::endl;
-			}
-			mutexes[i].unlock();
-		}
+			//}
+			//mutexes[i].unlock();
+		//}
 	}
 }
 
@@ -128,7 +138,7 @@ void check_for_finished_chunks() {
 				if (finished) {
 					Tasks[i] = std::shared_future<int>();
 					Tasks[i].reset();
-					ChunkCluster[i].value().loaded = true;//allows it to be rendered
+					ChunkCluster[chunk_index].value().loaded = true;//allows it to be rendered
 				}
 				else
 				{
@@ -164,9 +174,31 @@ void mt_build_chunk(int slot, float c_x, float c_y, float c_z) {
 	}
 
 	ChunkCluster[slot] = Chunk(c_x, c_y, c_z);
+
+	int offset_x = std::floorf((c_x + f_ChunkWidth / 2.0f) / f_ChunkWidth);
+	int offset_z = std::floorf((c_z + f_ChunkWidth / 2.0f) / f_ChunkWidth);
+	std::cout << "Chunk " << slot << "has a offset of " << offset_x << " " << offset_z << std::endl;
+
+	ChunkCluster[slot].value().location_index = { offset_x, offset_z };
+	position_index[{offset_x, offset_z}] = slot;
 	append_task(std::async(std::launch::async, build_chunk_cpu, slot));
 }
 
 void queue_chunk_build(int slot, float c_x, float c_y, float c_z) {
 	chunk_queue.push_front({ slot,c_x,c_y,c_z });
+}
+
+void destroy_block(int x, int y, int z)
+{
+	int offset_x = x / ChunkWidth;
+	int offset_z = z / ChunkWidth;
+
+	//gets the chunk in which the block is located in
+	int chunkIndex = position_index[{offset_x, offset_z}];
+	
+	int blockpos_x = x % ChunkWidth;
+	int blockpos_y = y;
+	int blockpos_z = z % ChunkWidth;
+
+	ChunkCluster[chunkIndex].value().DestroyBlock(blockpos_x,blockpos_y,blockpos_z);
 }

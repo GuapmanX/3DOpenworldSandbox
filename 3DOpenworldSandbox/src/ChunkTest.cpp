@@ -50,10 +50,8 @@ void processInput(GLFWwindow* window)
         Camera::SetPosition(Camera::GetPosition() + (glm::cross(Camera::GetDirection(), upVector) * Time::GetDeltaTime() * Camera::GetCameraSpeed()));
 };
 
-
 int main(void)
 {
-
 
     /* Initialize the library */
     if (!glfwInit())
@@ -123,7 +121,18 @@ int main(void)
         //mt_build_chunk(5, 32.0f, 32.0f, 32.0f);
         //build_chunk_cpu(5, 32.0f, 32.0f, 32.0f);
         float Start = glfwGetTime();
-        mt_build_chunk(0, 32.0f, 32.0f, 32.0f);
+        
+        unsigned int i = 0;
+        for (unsigned int x = 0; x < 5; x++) {
+
+            for (unsigned int y = 0; y < 5; y++) {
+
+                queue_chunk_build(i, 16.0f * ((float)x + 1.0f), -32.0f, 16.0f * ((float)y + 1.0f));
+                i++;
+            }
+            //queue_chunk_build(i, 16.0f * ((float)x + 1.0f), 32.0f, 32.0f);
+        }
+
         float End = glfwGetTime();
 
         std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
@@ -149,13 +158,10 @@ int main(void)
             timepassed += Time::GetDeltaTime();
             if (timepassed > 5.0f and not deleted) {
                 deleted = true;
-                float Start = glfwGetTime();
-                    for (unsigned int i = 1; i < 20; i++) {
-                        queue_chunk_build(i, 32.0f, 32.0f * ((float)i + 1.0f), 32.0f);
-                    }
-                float End = glfwGetTime();
-
-                std::cout << "Drawing a whole chunk took " << (End - Start) << "seconds" << std::endl;
+                
+                for (int i = 1; i < 30; i++) {
+                    destroy_block(i, 1, 1);
+                }
 
             }
 

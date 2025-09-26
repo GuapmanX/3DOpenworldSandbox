@@ -14,6 +14,10 @@
 
 const int ChunkWidth = 16;
 const int ChunkHeight = 32;
+
+const float f_ChunkWidth = 16.0f;
+const float f_ChunkHeight = 32.0f;
+
 const int bytesPerCube = sizeof(Quad) * 6;
 
 
@@ -47,7 +51,9 @@ public:
 
 	glm::mat4 m_ModelMatrix{ 1.0f };
 	glm::vec3 m_Position{ 1.0f,1.0f,1.0f };
-	glm::vec3 BlocksLoaded{ 1,1,1 };
+	glm::ivec3 BlocksLoaded{ 1,1,1 };
+
+	glm::vec2 location_index{ 0,0 };
 
 	gpu_Cube* gpu_data = new gpu_Cube[ChunkWidth * ChunkWidth * ChunkHeight];
 	bool loaded = false;
