@@ -1,9 +1,9 @@
 #pragma once
 #include "GameObjects/Chunk.h"
 
-const int max_buffer_size = 25;
-const int lazy_chunk_loading_amount = 500; //how many blocks are sent to the gpu in one frame
-const int lazy_chunk_construction_amount = 2; //how many chunks can be constructed in one frame
+const int max_buffer_size = 110;
+const int lazy_chunk_loading_amount = 1000; //how many blocks are sent to the gpu in one frame
+const int lazy_chunk_construction_amount = 1; //how many chunks can be constructed in one frame
 
 void set_chunk_buffer_size();
 void render_chunks();

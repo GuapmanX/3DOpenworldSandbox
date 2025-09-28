@@ -59,11 +59,11 @@ int build_chunk_cpu(int slot) {
 		return -1;
 	}
 
-	for (int x = 1; x < ChunkWidth + 1; x++)
+	for (int x = 0; x < ChunkWidth; x++)
 	{
-		for (int y = 1; y < ChunkHeight/2 + 1; y++)
+		for (int y = 0; y < ChunkHeight/2; y++)
 		{
-			for (int z = 1; z < ChunkWidth + 1; z++)
+			for (int z = 0; z < ChunkWidth; z++)
 			{
 				ChunkCluster[slot].value().SetBlock_CPU(x, y, z);
 			}
@@ -82,15 +82,15 @@ bool GPU_upload(int slot) {
 	unsigned int blocks_built = 0;
 	glm::ivec3 Loaded = ChunkCluster[slot].value().BlocksLoaded;
 
-	for (int x = Loaded.x; x < ChunkWidth + 1; x++)
+	for (int x = Loaded.x; x < ChunkWidth; x++)
 	{
-		Loaded.x = 1;
-		for (int y = Loaded.y; y < ChunkHeight + 1; y++)
+		Loaded.x = 0;
+		for (int y = Loaded.y; y < ChunkHeight; y++)
 		{
-			Loaded.y = 1;
-			for (int z = Loaded.z; z < ChunkWidth + 1; z++)
+			Loaded.y = 0;
+			for (int z = Loaded.z; z < ChunkWidth; z++)
 			{
-				Loaded.z = 1;
+				Loaded.z = 0;
 				//std::cout << x << " " << y << " " << z << std::endl;
 				ChunkCluster[slot].value().UpdateBlock_GPU(x, y, z);
 				blocks_built++;
@@ -139,6 +139,7 @@ void check_for_finished_chunks() {
 					Tasks[i] = std::shared_future<int>();
 					Tasks[i].reset();
 					ChunkCluster[chunk_index].value().loaded = true;//allows it to be rendered
+					ChunkCluster[chunk_index].value().clear_cpu_buffer();
 				}
 				else
 				{
@@ -174,13 +175,24 @@ void mt_build_chunk(int slot, float c_x, float c_y, float c_z) {
 	}
 
 	ChunkCluster[slot] = Chunk(c_x, c_y, c_z);
+	std::cout << ChunkCluster.capacity() << std::endl;
+	std::cout << slot << std::endl;
 
 	int offset_x = std::floorf((c_x + f_ChunkWidth / 2.0f) / f_ChunkWidth);
 	int offset_z = std::floorf((c_z + f_ChunkWidth / 2.0f) / f_ChunkWidth);
-	std::cout << "Chunk " << slot << "has a offset of " << offset_x << " " << offset_z << std::endl;
+	//std::cout << "Chunk " << slot << "has a offset of " << offset_x << " " << offset_z << std::endl;
 
 	ChunkCluster[slot].value().location_index = { offset_x, offset_z };
 	position_index[{offset_x, offset_z}] = slot;
+	int x2 = c_x / ChunkWidth;
+	int z2 = c_z / ChunkWidth;
+
+	//std::cout << " " << std::endl;
+	//std::cout << "fake offset is: " << x2 << " " << z2 << "\n";
+	//std::cout << "offset is: " << offset_x << " " << offset_z << "\n";
+	//std::cout << "slot is: " << slot << std::endl;
+	//std::cout << "sanity check:" << position_index[Key2(x2, z2)] << std::endl;
+
 	append_task(std::async(std::launch::async, build_chunk_cpu, slot));
 }
 
@@ -199,6 +211,11 @@ void destroy_block(int x, int y, int z)
 	int blockpos_x = x % ChunkWidth;
 	int blockpos_y = y;
 	int blockpos_z = z % ChunkWidth;
+
+	//std::cout << "SubBlock " << blockpos_x << " " << blockpos_z << std::endl;
+
+	//std::cout << "Chunk is located at grid X:" << offset_x << " Y: " << offset_z << "\n";
+	//std::cout << "index is: " << chunkIndex << "\n";
 
 	ChunkCluster[chunkIndex].value().DestroyBlock(blockpos_x,blockpos_y,blockpos_z);
 }

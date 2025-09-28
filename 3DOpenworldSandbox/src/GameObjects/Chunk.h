@@ -51,12 +51,13 @@ public:
 
 	glm::mat4 m_ModelMatrix{ 1.0f };
 	glm::vec3 m_Position{ 1.0f,1.0f,1.0f };
-	glm::ivec3 BlocksLoaded{ 1,1,1 };
+	glm::ivec3 BlocksLoaded{ 0,0,0 };
 
 	glm::vec2 location_index{ 0,0 };
 
 	gpu_Cube* gpu_data = new gpu_Cube[ChunkWidth * ChunkWidth * ChunkHeight];
 	bool loaded = false;
+	bool cpu_buffer_cleared = false;
 	
 
 	void SetBlock(int x, int y, int z);
@@ -83,7 +84,7 @@ public:
 	void SetBlock_CPU(int x, int y, int z);
 	void DestroyBlock_CPU(int x, int y, int z);
 
-
+	void clear_cpu_buffer();
 
 private:
 	//general

@@ -123,11 +123,13 @@ int main(void)
         float Start = glfwGetTime();
         
         unsigned int i = 0;
-        for (unsigned int x = 0; x < 5; x++) {
+        for (int x = 0; x < 10; x++) {
 
-            for (unsigned int y = 0; y < 5; y++) {
+            for (int y = 0; y < 10; y++) {
+                //if (i == 43) { std::cout << x << ", " << y << std::endl; break; }
 
-                queue_chunk_build(i, 16.0f * ((float)x + 1.0f), -32.0f, 16.0f * ((float)y + 1.0f));
+                //std::cout << i << std::endl;
+                queue_chunk_build(i, 16.0f * (float)x, -32.0f, 16.0f * (float)y);
                 i++;
             }
             //queue_chunk_build(i, 16.0f * ((float)x + 1.0f), 32.0f, 32.0f);
@@ -159,9 +161,13 @@ int main(void)
             if (timepassed > 5.0f and not deleted) {
                 deleted = true;
                 
-                for (int i = 1; i < 30; i++) {
-                    destroy_block(i, 1, 1);
+                /*for (int i = 0; i < 50; i++) {
+                    destroy_block(i, 0, 0);
                 }
+
+                for (int i = 0; i < 50; i++) {
+                    destroy_block(0, 0, i);
+                }*/
 
             }
 
@@ -205,6 +211,9 @@ int main(void)
 
             ImGui::Begin("Hello, world!");
             ImGui::Text("framerate = %f", 1.0f / Time::GetDeltaTime());
+            glm::vec3 campos = Camera::GetPosition();
+            ImGui::InputFloat3("position",&campos.x);
+
             ImGui::End();
 
             ImGui::Render();

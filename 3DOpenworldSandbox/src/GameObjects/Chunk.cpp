@@ -76,8 +76,10 @@ Chunk::Chunk(float x, float y, float z)
 }
 
 Chunk::~Chunk() {
-	delete[] gpu_data;
-	gpu_data = nullptr;
+	if (!cpu_buffer_cleared) {
+		delete[] gpu_data;
+		gpu_data = nullptr;
+	}
 }
 
 Chunk::Chunk(Chunk&& other) noexcept
@@ -369,27 +371,27 @@ void Chunk::SetBlockBufferData(int x, int y, int z, bool redrawNearbyBlocks)
 void Chunk::SetBlock(int x, int y, int z)
 {
 	//Checks if its outside the chunk borders
-	if (x - 1 < 0 || x > ChunkWidth) { return; }
-	if (y - 1 < 0 || y > ChunkHeight) { return; }
-	if (z - 1 < 0 || z > ChunkWidth) { return; }
+	if (x < 0 || x > ChunkWidth) { return; }
+	if (y < 0 || y > ChunkHeight) { return; }
+	if (z < 0 || z > ChunkWidth) { return; }
 	////////////////////////////////////////
 
-	m_BlockMatrix[x - 1][z - 1][y - 1].setOccupation(true);
-	SetBlockBufferData(x - 1, y - 1, z - 1, true);
+	m_BlockMatrix[x][z][y].setOccupation(true);
+	SetBlockBufferData(x, y, z, true);
 }
 
 
 void Chunk::DestroyBlock(int x, int y, int z)
 {
 	//Checks if its outside the chunk borders
-	if (x - 1 < 0 || x > ChunkWidth) { return; }
-	if (y - 1 < 0 || y > ChunkHeight) { return; }
-	if (z - 1 < 0 || z > ChunkWidth) { return; }
+	if (x < 0 || x > ChunkWidth) { return; }
+	if (y < 0 || y > ChunkHeight) { return; }
+	if (z < 0 || z > ChunkWidth) { return; }
 	////////////////////////////////////////
 
-	m_BlockMatrix[x - 1][z - 1][y - 1].setOccupation(false);
-	ClearBufferPosition(x - 1, y - 1, z - 1);
-	RedrawNearbyBlocks(x - 1, y - 1, z - 1);
+	m_BlockMatrix[x][z][y].setOccupation(false);
+	ClearBufferPosition(x, y, z);
+	RedrawNearbyBlocks(x, y, z);
 
 }
 
@@ -427,26 +429,32 @@ void Chunk::PrepareBlockCPUData(int x, int y, int z, bool redrawNearbyBlocks)
 void Chunk::SetBlock_CPU(int x, int y, int z)
 {
 	//Checks if its outside the chunk borderrs
-	if (x - 1 < 0 || x > ChunkWidth) { return; }
-	if (y - 1 < 0 || y > ChunkHeight) { return; }
-	if (z - 1 < 0 || z > ChunkWidth) { return; }
+	if (x < 0 || x > ChunkWidth) { return; }
+	if (y < 0 || y > ChunkHeight) { return; }
+	if (z < 0 || z > ChunkWidth) { return; }
 	////////////////////////////////////////
 
-	m_BlockMatrix[x - 1][z - 1][y - 1].setOccupation(true);
-	PrepareBlockCPUData(x - 1, y - 1, z - 1, true);
+	m_BlockMatrix[x][z][y].setOccupation(true);
+	PrepareBlockCPUData(x, y, z, true);
 }
 
 void Chunk::DestroyBlock_CPU(int x, int y, int z)
 {
 	//Checks if its outside the chunk borders
-	if (x - 1 < 0 || x > ChunkWidth) { return; }
-	if (y - 1 < 0 || y > ChunkHeight) { return; }
-	if (z - 1 < 0 || z > ChunkWidth) { return; }
+	if (x < 0 || x > ChunkWidth) { return; }
+	if (y < 0 || y > ChunkHeight) { return; }
+	if (z < 0 || z > ChunkWidth) { return; }
 	////////////////////////////////////////
 
-	m_BlockMatrix[x - 1][z - 1][y - 1].setOccupation(false);
-	ClearBufferPosition_CPU(x - 1, y - 1, z - 1);
-	RedrawNearbyBlocks(x - 1, y - 1, z - 1);
+	m_BlockMatrix[x][z][y].setOccupation(false);
+	ClearBufferPosition_CPU(x, y, z);
+	RedrawNearbyBlocks(x, y, z);
+}
+
+void Chunk::clear_cpu_buffer()
+{
+	delete[] gpu_data;
+	gpu_data = nullptr;
 }
 
 void Chunk::RedrawNearbyBlocks_CPU(int x, int y, int z)
@@ -652,7 +660,7 @@ void Chunk::GenerateCube_CPU(Quad(&data)[6], float x, float y, float z, const bo
 
 
 void Chunk::UpdateBlock_GPU(int x, int y, int z){
-	int linearIndex = (x - 1) + ChunkWidth * ((y - 1) + ChunkHeight * (z - 1));
+	int linearIndex = (x) + ChunkWidth * ((y) + ChunkHeight * (z));
 	int bufferOffset = linearIndex * bytesPerCube;
 
 
